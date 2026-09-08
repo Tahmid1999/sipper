@@ -1,0 +1,7 @@
+[versions]
+kotlin = "2.4.10"
+binaryCompat = "0.16.3"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+binaryCompat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompat" }

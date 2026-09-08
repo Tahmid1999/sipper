@@ -1,0 +1,20 @@
+# sipper — Cline rules
+
+## Authority
+- `sipper-docs/docs/CONTRACT.md` is the tie-breaker. Where any doc disagrees with it, the contract wins.
+- Build strictly from `plan.md`, milestone by milestone.
+
+## How to work (the model loops if you don't)
+- ONE file per task. Write it, then stop for review. Do not batch files or "build the module".
+- Pre-decide everything before writing. If the contract is ambiguous on a case, STOP and ask — never invent behavior and never deliberate in a loop.
+- Load only the docs the current task needs. Milestone 1 (:audit) needs CONTRACT + ARCHITECTURE only.
+- Copy type definitions from CONTRACT §2 verbatim — do not rename, add, or drop fields.
+
+## Fixed facts (do not change)
+- Pinned: Kotlin 2.4.10, JDK 17, Gradle 8.13. Never downgrade/upgrade a pinned version to make a build pass — report the error instead.
+- `:audit` and `:usage` are pure Kotlin JVM, zero production deps (a purity gate enforces this).
+- Package root: `io.github.tahmid1999.sipper.<module>`. applicationId `io.github.tahmid1999.sipper`.
+- `Reading` has no getOrNull/map/fold; `SilentDefault` is NOT a data class (no copy/componentN).
+
+## Verify after each file
+- Run `.\gradlew.bat :audit:compileKotlin` (or `:audit:test`) and report the result before moving on.

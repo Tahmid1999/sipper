@@ -1,0 +1,8 @@
+.aider*
+.gradle/
+.gradle-dist/
+gradle-dist.zip
+build/
+*.iml
+.idea/
+
