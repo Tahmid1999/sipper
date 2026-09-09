@@ -1,0 +1,145 @@
+public abstract interface annotation class io/github/tahmid1999/sipper/audit/AuditOnly : java/lang/annotation/Annotation {
+}
+
+public final class io/github/tahmid1999/sipper/audit/DefaultCause : java/lang/Enum {
+	public static final field APPOP_DEFAULT_MODE Lio/github/tahmid1999/sipper/audit/DefaultCause;
+	public static final field KEY_ABSENT_FROM_PROFILE Lio/github/tahmid1999/sipper/audit/DefaultCause;
+	public static final field NO_USAGE_ACCESS Lio/github/tahmid1999/sipper/audit/DefaultCause;
+	public static final field PACKAGE_NOT_VISIBLE Lio/github/tahmid1999/sipper/audit/DefaultCause;
+	public static final field UNCLIPPED_INTERVAL_BUCKET Lio/github/tahmid1999/sipper/audit/DefaultCause;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/DefaultCause;
+	public static fun values ()[Lio/github/tahmid1999/sipper/audit/DefaultCause;
+}
+
+public abstract interface class io/github/tahmid1999/sipper/audit/Grant {
+}
+
+public final class io/github/tahmid1999/sipper/audit/Grant$ManifestQueries : io/github/tahmid1999/sipper/audit/Grant {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/Grant$ManifestQueries;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Grant$ManifestQueries;Ljava/lang/String;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Grant$ManifestQueries;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEntry ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Grant$SettingsToggle : io/github/tahmid1999/sipper/audit/Grant {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/Grant$SettingsToggle;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Grant$SettingsToggle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Grant$SettingsToggle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAction ()Ljava/lang/String;
+	public final fun getAppOp ()Ljava/lang/String;
+	public final fun getUri ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Grant$Unreachable : io/github/tahmid1999/sipper/audit/Grant {
+	public static final field INSTANCE Lio/github/tahmid1999/sipper/audit/Grant$Unreachable;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/tahmid1999/sipper/audit/Reading {
+}
+
+public final class io/github/tahmid1999/sipper/audit/Reading$Absent : io/github/tahmid1999/sipper/audit/Reading {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/github/tahmid1999/sipper/audit/Reading$Absent;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Reading$Absent;IILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Reading$Absent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMinApi ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Reading$Denied : io/github/tahmid1999/sipper/audit/Reading {
+	public fun <init> (Ljava/lang/String;Lio/github/tahmid1999/sipper/audit/Grant;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/tahmid1999/sipper/audit/Grant;
+	public final fun copy (Ljava/lang/String;Lio/github/tahmid1999/sipper/audit/Grant;)Lio/github/tahmid1999/sipper/audit/Reading$Denied;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Reading$Denied;Ljava/lang/String;Lio/github/tahmid1999/sipper/audit/Grant;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Reading$Denied;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHowToGrant ()Lio/github/tahmid1999/sipper/audit/Grant;
+	public final fun getPermission ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Reading$SilentDefault : io/github/tahmid1999/sipper/audit/Reading {
+	public fun <init> (Ljava/lang/Object;Lio/github/tahmid1999/sipper/audit/DefaultCause;Lio/github/tahmid1999/sipper/audit/Route;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCause ()Lio/github/tahmid1999/sipper/audit/DefaultCause;
+	public final fun getRoute ()Lio/github/tahmid1999/sipper/audit/Route;
+	public final fun getShown ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Reading$Value : io/github/tahmid1999/sipper/audit/Reading {
+	public fun <init> (Ljava/lang/Object;Lio/github/tahmid1999/sipper/audit/Route;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Lio/github/tahmid1999/sipper/audit/Route;
+	public final fun copy (Ljava/lang/Object;Lio/github/tahmid1999/sipper/audit/Route;)Lio/github/tahmid1999/sipper/audit/Reading$Value;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Reading$Value;Ljava/lang/Object;Lio/github/tahmid1999/sipper/audit/Route;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Reading$Value;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRoute ()Lio/github/tahmid1999/sipper/audit/Route;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Route {
+	public fun <init> (Lio/github/tahmid1999/sipper/audit/RouteKind;Ljava/lang/String;)V
+	public final fun component1 ()Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lio/github/tahmid1999/sipper/audit/RouteKind;Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/Route;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Route;Lio/github/tahmid1999/sipper/audit/RouteKind;Ljava/lang/String;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Route;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDetail ()Ljava/lang/String;
+	public final fun getKind ()Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/RouteKind : java/lang/Enum {
+	public static final field ANDROID_PACKAGE_RESOURCES Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field APP_OPS Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field BACK_FILL Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field BATTERY_BROADCAST Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field BATTERY_PROPERTY Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field NETWORK_STATS Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field PACKAGE_MANAGER Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field POWER_PROFILE_REFLECTION Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field PROC_FILE Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field SYSTEM_RESOURCES Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field USAGE_EVENTS Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static final field USAGE_INTERVALS Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/RouteKind;
+	public static fun values ()[Lio/github/tahmid1999/sipper/audit/RouteKind;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Verdict : java/lang/Enum {
+	public static final field BACK_FILLED Lio/github/tahmid1999/sipper/audit/Verdict;
+	public static final field PRESENT Lio/github/tahmid1999/sipper/audit/Verdict;
+	public static final field ZERO_BY_ABSENCE Lio/github/tahmid1999/sipper/audit/Verdict;
+	public static final field ZERO_BY_EXPLICIT_VALUE Lio/github/tahmid1999/sipper/audit/Verdict;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/Verdict;
+	public static fun values ()[Lio/github/tahmid1999/sipper/audit/Verdict;
+}
+
+public final class io/github/tahmid1999/sipper/audit/VerdictKt {
+	public static final fun verdictFor (Lio/github/tahmid1999/sipper/audit/Reading;)Lio/github/tahmid1999/sipper/audit/Verdict;
+}
+
