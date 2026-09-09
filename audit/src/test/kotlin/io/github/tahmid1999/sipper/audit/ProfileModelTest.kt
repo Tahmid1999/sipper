@@ -17,6 +17,12 @@ class ProfileModelTest {
     private val model36 = ProfileModel(parseProfile(xml), 36)
     private val model28 = ProfileModel(parseProfile(xml), 28)
 
+    private val arrayXml = """
+        <device name="Android">
+            <array name="cpu.speeds.cluster0"><value>0.4</value><value>1.2</value></array>
+        </device>
+    """.trimIndent()
+
     @Test
     fun batteryCapacityIsPresentAtApi36() {
         assertEquals(3000.0, model36.averagePower("battery.capacity"))
@@ -52,5 +58,11 @@ class ProfileModelTest {
         val audit = model36.audit()
         assertTrue(audit.verdicts.isNotEmpty())
         assertTrue(audit.count(Verdict.ZERO_BY_ABSENCE) > 0)
+    }
+
+    @Test
+    fun arrayKeyTakesElementZero() {
+        // element 0, not the sum or last element - verified at android-16.0.0_r1 PowerProfile.java:896, `return sPowerArrayMap.get(type)[0];`
+        assertEquals(0.4, ProfileModel(parseProfile(arrayXml), 36).averagePower("cpu.speeds.cluster0"))
     }
 }
