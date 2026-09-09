@@ -1,6 +1,50 @@
 public abstract interface annotation class io/github/tahmid1999/sipper/audit/AuditOnly : java/lang/annotation/Annotation {
 }
 
+public final class io/github/tahmid1999/sipper/audit/BackFill {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/IntRange;Lio/github/tahmid1999/sipper/audit/Transform;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lkotlin/ranges/IntRange;
+	public final fun component5 ()Lio/github/tahmid1999/sipper/audit/Transform;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/IntRange;Lio/github/tahmid1999/sipper/audit/Transform;)Lio/github/tahmid1999/sipper/audit/BackFill;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/BackFill;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/IntRange;Lio/github/tahmid1999/sipper/audit/Transform;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/BackFill;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApis ()Lkotlin/ranges/IntRange;
+	public final fun getFrom ()Ljava/lang/String;
+	public final fun getSynthesised ()Ljava/lang/String;
+	public final fun getTransform ()Lio/github/tahmid1999/sipper/audit/Transform;
+	public final fun getVia ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/BackFillKt {
+	public static final field BACK_FILL_MIN_API I
+	public static final fun declaredDisplayCount (Ljava/util/Map;)I
+	public static final fun displayBackFills (Ljava/util/Map;)Ljava/util/List;
+	public static final fun displayCount (Ljava/util/Map;I)I
+	public static final fun provenanceOf (Ljava/lang/String;Lio/github/tahmid1999/sipper/audit/ParsedProfile;I)Lio/github/tahmid1999/sipper/audit/Provenance;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Cite {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)Lio/github/tahmid1999/sipper/audit/Cite;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Cite;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Cite;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnchor ()Ljava/lang/String;
+	public final fun getFile ()Ljava/lang/String;
+	public final fun getLine ()I
+	public final fun getTag ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/github/tahmid1999/sipper/audit/DefaultCause : java/lang/Enum {
 	public static final field APPOP_DEFAULT_MODE Lio/github/tahmid1999/sipper/audit/DefaultCause;
 	public static final field KEY_ABSENT_FROM_PROFILE Lio/github/tahmid1999/sipper/audit/DefaultCause;
@@ -10,6 +54,17 @@ public final class io/github/tahmid1999/sipper/audit/DefaultCause : java/lang/En
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/DefaultCause;
 	public static fun values ()[Lio/github/tahmid1999/sipper/audit/DefaultCause;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Effect : java/lang/Enum {
+	public static final field NOT_READ Lio/github/tahmid1999/sipper/audit/Effect;
+	public static final field ZERO_DIVIDES Lio/github/tahmid1999/sipper/audit/Effect;
+	public static final field ZERO_SELECTS_FALLBACK Lio/github/tahmid1999/sipper/audit/Effect;
+	public static final field ZERO_ZEROES_COMPONENT Lio/github/tahmid1999/sipper/audit/Effect;
+	public static final field ZERO_ZEROES_TERM Lio/github/tahmid1999/sipper/audit/Effect;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/Effect;
+	public static fun values ()[Lio/github/tahmid1999/sipper/audit/Effect;
 }
 
 public abstract interface class io/github/tahmid1999/sipper/audit/Grant {
@@ -44,6 +99,122 @@ public final class io/github/tahmid1999/sipper/audit/Grant$SettingsToggle : io/g
 public final class io/github/tahmid1999/sipper/audit/Grant$Unreachable : io/github/tahmid1999/sipper/audit/Grant {
 	public static final field INSTANCE Lio/github/tahmid1999/sipper/audit/Grant$Unreachable;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/KeyFact {
+	public fun <init> (Ljava/lang/String;Lkotlin/ranges/IntRange;Ljava/lang/String;Lio/github/tahmid1999/sipper/audit/Effect;Lio/github/tahmid1999/sipper/audit/Cite;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlin/ranges/IntRange;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/github/tahmid1999/sipper/audit/Effect;
+	public final fun component5 ()Lio/github/tahmid1999/sipper/audit/Cite;
+	public final fun copy (Ljava/lang/String;Lkotlin/ranges/IntRange;Ljava/lang/String;Lio/github/tahmid1999/sipper/audit/Effect;Lio/github/tahmid1999/sipper/audit/Cite;)Lio/github/tahmid1999/sipper/audit/KeyFact;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/KeyFact;Ljava/lang/String;Lkotlin/ranges/IntRange;Ljava/lang/String;Lio/github/tahmid1999/sipper/audit/Effect;Lio/github/tahmid1999/sipper/audit/Cite;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/KeyFact;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApis ()Lkotlin/ranges/IntRange;
+	public final fun getCalculator ()Ljava/lang/String;
+	public final fun getCite ()Lio/github/tahmid1999/sipper/audit/Cite;
+	public final fun getEffect ()Lio/github/tahmid1999/sipper/audit/Effect;
+	public final fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/KeyTableKt {
+	public static final fun keyTable ()Ljava/util/List;
+	public static final fun parseKeyTable (Ljava/lang/String;)Ljava/util/List;
+}
+
+public final class io/github/tahmid1999/sipper/audit/ParsedProfile {
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;Ljava/util/Map;)Lio/github/tahmid1999/sipper/audit/ParsedProfile;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/ParsedProfile;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/ParsedProfile;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDeclared ()Ljava/util/Map;
+	public final fun getLines ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/ProfileAudit {
+	public fun <init> (ILjava/util/Map;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (ILjava/util/Map;)Lio/github/tahmid1999/sipper/audit/ProfileAudit;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/ProfileAudit;ILjava/util/Map;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/ProfileAudit;
+	public final fun count (Lio/github/tahmid1999/sipper/audit/Verdict;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApiLevel ()I
+	public final fun getVerdicts ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/ProfileAuditKt {
+	public static final fun verdictOf (Lio/github/tahmid1999/sipper/audit/Provenance;)Lio/github/tahmid1999/sipper/audit/Verdict;
+}
+
+public final class io/github/tahmid1999/sipper/audit/ProfileModel {
+	public fun <init> (Lio/github/tahmid1999/sipper/audit/ParsedProfile;I)V
+	public fun <init> (Ljava/util/Map;ILjava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun audit ()Lio/github/tahmid1999/sipper/audit/ProfileAudit;
+	public final fun averagePower (Ljava/lang/String;)D
+	public final fun getApiLevel ()I
+	public final fun getDeclared ()Ljava/util/Map;
+	public final fun provenance (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/Provenance;
+}
+
+public final class io/github/tahmid1999/sipper/audit/ProfileParserKt {
+	public static final fun parseProfile (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/ParsedProfile;
+}
+
+public abstract interface class io/github/tahmid1999/sipper/audit/Provenance {
+}
+
+public final class io/github/tahmid1999/sipper/audit/Provenance$BackFilled : io/github/tahmid1999/sipper/audit/Provenance {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()D
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;)Lio/github/tahmid1999/sipper/audit/Provenance$BackFilled;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Provenance$BackFilled;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Provenance$BackFilled;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFrom ()Ljava/lang/String;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getValue ()D
+	public final fun getVia ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Provenance$Declared : io/github/tahmid1999/sipper/audit/Provenance {
+	public fun <init> (Ljava/lang/String;DI)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()D
+	public final fun component3 ()I
+	public final fun copy (Ljava/lang/String;DI)Lio/github/tahmid1999/sipper/audit/Provenance$Declared;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Provenance$Declared;Ljava/lang/String;DIILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Provenance$Declared;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFileLine ()I
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getValue ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Provenance$NotDeclared : io/github/tahmid1999/sipper/audit/Provenance {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/Provenance$NotDeclared;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Provenance$NotDeclared;Ljava/lang/String;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Provenance$NotDeclared;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -127,6 +298,42 @@ public final class io/github/tahmid1999/sipper/audit/RouteKind : java/lang/Enum 
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/tahmid1999/sipper/audit/RouteKind;
 	public static fun values ()[Lio/github/tahmid1999/sipper/audit/RouteKind;
+}
+
+public abstract interface class io/github/tahmid1999/sipper/audit/Transform {
+}
+
+public final class io/github/tahmid1999/sipper/audit/Transform$Identity : io/github/tahmid1999/sipper/audit/Transform {
+	public static final field INSTANCE Lio/github/tahmid1999/sipper/audit/Transform$Identity;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Transform$ModemDrain : io/github/tahmid1999/sipper/audit/Transform {
+	public fun <init> (III)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (III)Lio/github/tahmid1999/sipper/audit/Transform$ModemDrain;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Transform$ModemDrain;IIIILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Transform$ModemDrain;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDrainType ()I
+	public final fun getFreqRange ()I
+	public final fun getRat ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/audit/Transform$PerDisplay : io/github/tahmid1999/sipper/audit/Transform {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/github/tahmid1999/sipper/audit/Transform$PerDisplay;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/audit/Transform$PerDisplay;IILjava/lang/Object;)Lio/github/tahmid1999/sipper/audit/Transform$PerDisplay;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOrdinal ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/github/tahmid1999/sipper/audit/Verdict : java/lang/Enum {
