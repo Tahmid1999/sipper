@@ -14,3 +14,4 @@ rootProject.name = "sipper"
 
 include(":audit")
 include(":usage")
+include(":data")

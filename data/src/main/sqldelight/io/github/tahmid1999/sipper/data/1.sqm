@@ -1,0 +1,109 @@
+-- One row per audit run. Everything needed to reproduce the verdicts is here,
+-- so a screenshot can be traced back to a row rather than to "a phone, once".
+CREATE TABLE profile_audit (
+    id                       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    captured_at              INTEGER NOT NULL,   -- epoch ms
+    boot_count               INTEGER NOT NULL,   -- Settings.Global.BOOT_COUNT; no permission,
+                                                 -- and it is what makes elapsedRealtime spans
+                                                 -- from different boots non-comparable rather
+                                                 -- than silently comparable
+    fingerprint              TEXT NOT NULL,      -- Build.FINGERPRINT
+    api_level                INTEGER NOT NULL,
+    route_system_sha         TEXT,               -- sha256 of the bytes each route resolved;
+    route_package_sha        TEXT,               -- null means the route itself failed, which is
+    route_reflection_ok      INTEGER NOT NULL,   -- different from resolving to nothing
+    routes_agree             INTEGER NOT NULL,
+    disagreement             TEXT,               -- the rendered diff; null iff routes_agree = 1
+    declared_key_count       INTEGER NOT NULL,
+    battery_capacity_declared REAL,
+    charge_counter_uah       INTEGER             -- the independent cross-check on capacity
+);
+
+-- One row per key per audit. verdict is stored as its enum name, not an ordinal:
+-- a reordered enum must not silently rewrite history, and a person running
+-- sqlite3 against this file should read ZERO_BY_ABSENCE rather than 2.
+CREATE TABLE key_result (
+    audit_id         INTEGER NOT NULL REFERENCES profile_audit(id) ON DELETE CASCADE,
+    key              TEXT NOT NULL,
+    verdict          TEXT NOT NULL,   -- PRESENT | ZERO_BY_EXPLICIT_VALUE | ZERO_BY_ABSENCE | BACK_FILLED
+    declared_value   REAL,            -- null when the key is not in the file at all
+    effective_value  REAL NOT NULL,   -- what getAveragePower returns, back-fill included
+    back_filled_from TEXT,            -- null unless verdict = BACK_FILLED
+    reflection_value REAL,            -- the cross-check route; recorded, never authoritative
+    calculator       TEXT,            -- null when nothing reads this key at this api_level
+    PRIMARY KEY (audit_id, key)
+);
+
+-- One row per package per local day. Both foreground numbers live here side by
+-- side because the delta between them is the finding, and a schema that stored
+-- only the better one would make the finding unrecoverable.
+CREATE TABLE app_day (
+    package             TEXT NOT NULL,
+    day                 TEXT NOT NULL,      -- ISO-8601 local date, yyyy-MM-dd
+    fw_foreground_ms    INTEGER,            -- queryUsageStats, unclipped; null when access is off
+    recon_foreground_ms INTEGER NOT NULL,
+    unclosed_tail_ms    INTEGER NOT NULL,   -- the residual, published rather than absorbed
+    dup_resumes         INTEGER NOT NULL,   -- the multi-instance residual
+    visible_ms          INTEGER,            -- null below API 29: the events do not exist
+    fgs_ms              INTEGER,            -- null below API 29
+    rx_fg_bytes         INTEGER,
+    tx_fg_bytes         INTEGER,
+    rx_bg_bytes         INTEGER,
+    tx_bg_bytes         INTEGER,
+    window_start        INTEGER NOT NULL,   -- the exact ms bounds the reconstruction used, so a
+    window_end          INTEGER NOT NULL,   -- row can be recomputed from app_event and checked
+    closed_by_shutdown  INTEGER NOT NULL,
+    lost_tails          INTEGER NOT NULL,
+    PRIMARY KEY (package, day)
+);
+
+-- The raw stream. class_name is NOT NULL DEFAULT '' rather than nullable
+-- because SQLite treats NULLs as distinct in a UNIQUE index, so a nullable
+-- column here would let every re-poll insert a duplicate of every classless
+-- event and quietly double the reconstruction.
+CREATE TABLE app_event (
+    id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    package     TEXT NOT NULL,
+    class_name  TEXT NOT NULL DEFAULT '',
+    event_type  INTEGER NOT NULL,   -- raw int; several of these have no public constant
+    timestamp   INTEGER NOT NULL,
+    ingested_at INTEGER NOT NULL    -- separate from timestamp: overlapping poll windows are
+                                    -- normal and the gap between the two is how a late flush
+                                    -- is told from a late poll
+);
+CREATE INDEX app_event_pkg_ts ON app_event(package, timestamp);
+CREATE UNIQUE INDEX app_event_dedupe ON app_event(package, class_name, event_type, timestamp);
+
+CREATE TABLE bucket_change (
+    package   TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    bucket    INTEGER NOT NULL,   -- raw int; 5, 15, 45 and 50 all occur and none is a
+                                  -- public constant, so an enum here would lose values
+    PRIMARY KEY (package, timestamp)
+);
+
+-- Route, then observe. There is no column for "applied", because sipper never
+-- applies anything and a nullable applied_at would invite one.
+CREATE TABLE intervention (
+    id                 INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    package            TEXT NOT NULL,
+    routed_at          INTEGER NOT NULL,
+    action             TEXT NOT NULL,   -- the Intent action actually launched
+    resolved_component TEXT,            -- what resolveActivity returned; null when nothing did
+    returned_at        INTEGER,         -- null if the user never came back
+    readback_level     TEXT NOT NULL,   -- A (first-party, sipper's own package) | B | C
+    readback_before    TEXT,            -- the Reading, rendered, cause included
+    readback_after     TEXT,
+    observed_change    TEXT             -- null until the observation window closes
+);
+
+CREATE TABLE probe_result (
+    id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    probe       TEXT NOT NULL,   -- stable id, e.g. "power_profile.reflection"
+    run_at      INTEGER NOT NULL,
+    api_level   INTEGER NOT NULL,
+    outcome     TEXT NOT NULL,   -- VALUE | SILENT_DEFAULT | DENIED | ABSENT
+    detail      TEXT NOT NULL,   -- the verbatim runtime line, exception class and message included
+    duration_us INTEGER NOT NULL
+);
+CREATE INDEX probe_result_probe_run ON probe_result(probe, run_at);
