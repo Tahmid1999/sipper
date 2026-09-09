@@ -1,0 +1,5 @@
+# Keys required at this API level that the AOSP default profile does not define. See ARCHITECTURE §10 gate 2.
+bluetooth.controller.rx
+bluetooth.controller.voltage
+cpu.suspend
+modem.controller.sleep
