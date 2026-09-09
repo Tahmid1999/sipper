@@ -160,8 +160,7 @@ public final class io/github/tahmid1999/sipper/audit/ProfileAuditKt {
 
 public final class io/github/tahmid1999/sipper/audit/ProfileModel {
 	public fun <init> (Lio/github/tahmid1999/sipper/audit/ParsedProfile;I)V
-	public fun <init> (Ljava/util/Map;ILjava/util/Map;)V
-	public synthetic fun <init> (Ljava/util/Map;ILjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/Map;I)V
 	public final fun audit ()Lio/github/tahmid1999/sipper/audit/ProfileAudit;
 	public final fun averagePower (Ljava/lang/String;)D
 	public final fun getApiLevel ()I

@@ -1,10 +1,13 @@
 package io.github.tahmid1999.sipper.audit
 
-public class ProfileModel(
+public class ProfileModel private constructor(
     public val declared: Map<String, List<Double>>,
     public val apiLevel: Int,
-    private val lines: Map<String, Int> = emptyMap(),
+    private val lines: Map<String, Int>,
 ) {
+    public constructor(declared: Map<String, List<Double>>, apiLevel: Int) :
+        this(declared, apiLevel, emptyMap())
+
     public constructor(parsed: ParsedProfile, apiLevel: Int) :
         this(parsed.declared, apiLevel, parsed.lines)
 
@@ -30,6 +33,12 @@ public class ProfileModel(
         apiLevel = apiLevel,
         verdicts = keyTable()
             .filter { apiLevel in it.apis }
+            .also { rows ->
+                val duplicates = rows.groupingBy { it.key }.eachCount().filterValues { it > 1 }
+                require(duplicates.isEmpty()) {
+                    "key table has overlapping api ranges at api $apiLevel: ${duplicates.keys}"
+                }
+            }
             .associate { it.key to verdictOf(provenance(it.key)) },
     )
 }
