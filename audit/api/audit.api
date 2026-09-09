@@ -125,6 +125,7 @@ public final class io/github/tahmid1999/sipper/audit/KeyFact {
 public final class io/github/tahmid1999/sipper/audit/KeyTableKt {
 	public static final fun keyTable ()Ljava/util/List;
 	public static final fun parseKeyTable (Ljava/lang/String;)Ljava/util/List;
+	public static final fun requiredKeys (I)Ljava/util/Set;
 }
 
 public final class io/github/tahmid1999/sipper/audit/ParsedProfile {

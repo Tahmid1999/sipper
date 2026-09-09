@@ -39,3 +39,13 @@ public fun keyTable(): List<KeyFact> {
         ?: error("keytable.tsv missing from :audit resources")
     return stream.use { parseKeyTable(it.readBytes().decodeToString()) }
 }
+
+/**
+ * The keys some calculator actually reads at this API level, so a profile that omits one is omitting
+ * something the framework will price. NOT_READ rows are excluded: a key nothing reads is not required.
+ */
+public fun requiredKeys(apiLevel: Int): Set<String> =
+    keyTable()
+        .filter { apiLevel in it.apis && it.effect != Effect.NOT_READ }
+        .map { it.key }
+        .toSet()

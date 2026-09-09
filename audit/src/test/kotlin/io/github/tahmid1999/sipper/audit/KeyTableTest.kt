@@ -67,4 +67,13 @@ class KeyTableTest {
         assertEquals(Effect.NOT_READ, row.effect)
         assertTrue(row.cite.file.endsWith("os/PowerProfile.java"))
     }
+
+    @Test
+    fun requiredKeysAtApi36() {
+        val required = requiredKeys(36)
+        assertTrue(required.isNotEmpty())
+        val keys = keyTable().map { it.key }.toSet()
+        assertTrue(required.all { it in keys })
+        assertTrue("screen.on" !in required)
+    }
 }
