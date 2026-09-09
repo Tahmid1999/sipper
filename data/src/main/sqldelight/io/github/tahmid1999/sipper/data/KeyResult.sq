@@ -1,0 +1,24 @@
+insertAudit:
+INSERT INTO profile_audit (
+    captured_at, boot_count, fingerprint, api_level,
+    route_system_sha, route_package_sha, route_reflection_ok, routes_agree,
+    disagreement, declared_key_count, battery_capacity_declared, charge_counter_uah
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+lastAuditId:
+SELECT last_insert_rowid();
+
+insertKeyResult:
+INSERT INTO key_result (
+    audit_id, key, verdict, declared_value, effective_value,
+    back_filled_from, reflection_value, calculator
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+keyResultsFor:
+SELECT * FROM key_result WHERE audit_id = ? ORDER BY key;
+
+verdictCountsFor:
+SELECT verdict, COUNT(*) AS n FROM key_result WHERE audit_id = ? GROUP BY verdict ORDER BY verdict;
+
+auditById:
+SELECT * FROM profile_audit WHERE id = ?;
