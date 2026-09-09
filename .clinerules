@@ -22,3 +22,26 @@
 ## Identity & privacy
 - Git author for this repo: Tahmid Alavi Ishmam <tahmidalavi1999@gmail.com>. If you make any git commit, use this identity — never a company address.
 - Never write, keep, or reintroduce the name "tahmid1999" anywhere — package names, folder paths, comments, strings, or commit messages. The package root is defined in ARCHITECTURE.md §1; use exactly that and nothing else.
+
+## Autonomous milestone runs
+When told to run a milestone from plan.md, work the steps IN ORDER without asking between them:
+1. Write exactly ONE file (or one edit) for the current step.
+2. Run the gradle command that step names (`.\gradlew.bat :audit:test`, or `:audit:compileKotlin`).
+3. If green: `git add -A` then `git commit -m "audit: <what this step did>"`. Then move to the next step.
+4. If red: STOP. Report the exact compiler or test output. Never weaken a test, relax a build
+   setting, or change a pinned version to make a build pass.
+5. STOP and ask when the spec is genuinely ambiguous on a case. Never invent a rule to keep moving.
+Report once at the end: the steps completed, each commit, and the final test counts.
+
+## Self-review before reporting (do this instead of waiting for a human review)
+Before you report a step done, re-read the CONTRACT.md or ARCHITECTURE.md section that step cites and
+check the file you just wrote against it: every field name, type, enum member, and member count.
+If anything disagrees with the doc, report the disagreement — do not silently fix it and do not
+silently keep it. This check is cheap and it is your job, not the reviewer's.
+
+## Never invent data
+Never write a value you did not read from a cited source. That includes AOSP source text, file line
+numbers, measured device values, and test fixture numbers presented as real. If a value is unavailable,
+leave the field empty and say so. A plausible fabricated value is the worst defect possible in this
+repository, because the repository's entire claim is that manufactured values must never be presented
+as real ones.

@@ -278,6 +278,53 @@ Verdict derivation, complete:
 | `SilentDefault(0.0, KEY_ABSENT_FROM_PROFILE, …)` | `ZERO_BY_ABSENCE` |
 | `Value(v, Route(BACK_FILL, from))` | `BACK_FILLED` |
 
+### 3.1 Modem back-fill is not announced, and splits in two
+
+The rule above rests on the platform announcing the synthesis. It does for displays and does not for
+modem. Verbatim at `android-16.0.0_r1`, fetched from `android.googlesource.com` (see `NOTES.md`):
+
+`PowerProfile.initDisplays` guards each legacy copy on a non-null value **and** `mNumDisplays == 0`
+(`:802`, `:810`, `:818`), then names source and destination:
+
+```java
+812            Slog.w(TAG, POWER_SCREEN_ON + " is deprecated! Use " + key + " instead.");
+```
+
+`PowerProfile.handleDeprecatedModemConstant` is seven lines and logs nothing on the write path:
+
+```java
+861    private void handleDeprecatedModemConstant(int key, String deprecatedKey, int level) {
+862        final double drain = sModemPowerProfile.getAverageBatteryDrainMa(key);
+863        if (!Double.isNaN(drain)) return; // Value already set, don't overwrite it.
+864
+865        final double deprecatedDrain = getAveragePower(deprecatedKey, level);
+866        sModemPowerProfile.setPowerConstant(key, Double.toString(deprecatedDrain));
+867    }
+```
+
+Line `865` reaches instance 1's own fall-through, which returns `0` at `:973` when the deprecated key
+is absent, and `866` stores that zero regardless. So the modem case splits:
+
+| modem constant, API 34+ | reading | verdict |
+| --- | --- | --- |
+| deprecated source **declared** — e.g. `radio.active` present | `Value(v, Route(BACK_FILL, deprecatedKey))` | `BACK_FILLED` |
+| deprecated source **also absent** | `SilentDefault(0.0, KEY_ABSENT_FROM_PROFILE, …)` | `ZERO_BY_ABSENCE` |
+
+The split is not cosmetic. In the first row a real value existed and was copied, so `SilentDefault`
+would be wrong: its `shown` is "what a caller that did not know would have printed", and every
+`DefaultCause` names a case where no real answer existed. In the second row nothing real existed.
+
+The second row is the sharper finding, and it is worse than plain absence. An absent key returns its
+default fresh on every call, so the absence stays re-derivable. Once `initModem` writes `0.0` into the
+constant, `getAverageBatteryDrainMa` returns it *without* the unknown-key warning at `:498-500`, and
+no later reader can separate it from a vendor-declared zero. The framework erases its own evidence of
+absence, on every device at API 34+, whether or not either key was ever defined.
+
+Nothing here changes a type: no fifth `Reading` constructor, no sixth `DefaultCause` member. The
+announced-versus-silent distinction is carried by `BackFill.via` in the chain model rather than by
+`Route`, so AUDIT can render a modem provenance chip without claiming a deprecation notice that was
+never emitted.
+
 ---
 
 ## 4. AUDIT — one information architecture

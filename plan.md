@@ -143,3 +143,7 @@ CONTRACT §3 (verdict derivation, already implemented in `verdictFor`).
   real XML captures.)
 
 Same lean context: CONTRACT + ARCHITECTURE + plan. Pre-decide every case in the prompt.
+
+---
+
+**Milestone 2 executable steps live in `plan-m2.md`.** Run those, in order, under the autonomous rules in `.clinerules`. The 2a-2f roadmap letters above are superseded by the M2-1..M2-5 steps in that file.
