@@ -33,3 +33,9 @@ public fun parseKeyTable(tsv: String): List<KeyFact> =
             )
         }
         .toList()
+
+public fun keyTable(): List<KeyFact> {
+    val stream = KeyFact::class.java.getResourceAsStream("/keytable.tsv")
+        ?: error("keytable.tsv missing from :audit resources")
+    return stream.use { parseKeyTable(it.readBytes().decodeToString()) }
+}

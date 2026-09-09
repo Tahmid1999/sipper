@@ -3,6 +3,7 @@ package io.github.tahmid1999.sipper.audit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class KeyTableTest {
 
@@ -36,5 +37,32 @@ class KeyTableTest {
         assertEquals("CpuPowerCalculator", row.calculator)
         assertEquals(Effect.ZERO_ZEROES_TERM, row.effect)
         assertEquals(212, row.cite.line)
+    }
+
+    @Test
+    fun keyTableHasThirtyFourRows() {
+        assertEquals(34, keyTable().size)
+    }
+
+    @Test
+    fun keyTableBatteryCapacityRow() {
+        val row = keyTable().first { it.key == "battery.capacity" }
+        assertEquals(Effect.ZERO_DIVIDES, row.effect)
+        assertNull(row.calculator)
+        assertEquals(26..36, row.apis)
+    }
+
+    @Test
+    fun keyTableContainsWifiOnAndActive() {
+        val keys = keyTable().map { it.key }
+        assertTrue("wifi.on" in keys)
+        assertTrue("wifi.active" in keys)
+    }
+
+    @Test
+    fun keyTableScreenOnBackFillRow() {
+        val row = keyTable().first { it.key == "screen.on" && it.apis == 34..36 }
+        assertEquals(Effect.NOT_READ, row.effect)
+        assertTrue(row.cite.file.endsWith("os/PowerProfile.java"))
     }
 }
