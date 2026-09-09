@@ -1,0 +1,61 @@
+public final class io/github/tahmid1999/sipper/usage/EventMachineKt {
+	public static final fun reconstruct (Ljava/util/List;JJI)Lio/github/tahmid1999/sipper/usage/Reconstruction;
+}
+
+public final class io/github/tahmid1999/sipper/usage/PackageWindow {
+	public fun <init> (JJJJIIII)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun component4 ()J
+	public final fun component5 ()I
+	public final fun component6 ()I
+	public final fun component7 ()I
+	public final fun component8 ()I
+	public final fun copy (JJJJIIII)Lio/github/tahmid1999/sipper/usage/PackageWindow;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/usage/PackageWindow;JJJJIIIIILjava/lang/Object;)Lio/github/tahmid1999/sipper/usage/PackageWindow;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClosedByShutdown ()I
+	public final fun getDupResumes ()I
+	public final fun getFgsMs ()J
+	public final fun getForegroundMs ()J
+	public final fun getLostTails ()I
+	public final fun getOpenAtStart ()I
+	public final fun getUnclosedTailMs ()J
+	public final fun getVisibleMs ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/usage/RawEvent {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;IJ)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4 ()J
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;IJ)Lio/github/tahmid1999/sipper/usage/RawEvent;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/usage/RawEvent;Ljava/lang/String;Ljava/lang/String;IJILjava/lang/Object;)Lio/github/tahmid1999/sipper/usage/RawEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClassName ()Ljava/lang/String;
+	public final fun getEventType ()I
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getTimestampMs ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/tahmid1999/sipper/usage/Reconstruction {
+	public fun <init> (Ljava/util/Map;Ljava/util/Set;Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Ljava/util/Set;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;Ljava/util/Set;Ljava/util/Map;)Lio/github/tahmid1999/sipper/usage/Reconstruction;
+	public static synthetic fun copy$default (Lio/github/tahmid1999/sipper/usage/Reconstruction;Ljava/util/Map;Ljava/util/Set;Ljava/util/Map;ILjava/lang/Object;)Lio/github/tahmid1999/sipper/usage/Reconstruction;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDegradedBelowApi ()Ljava/util/Set;
+	public final fun getUnknownEventTypes ()Ljava/util/Map;
+	public final fun getWindows ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

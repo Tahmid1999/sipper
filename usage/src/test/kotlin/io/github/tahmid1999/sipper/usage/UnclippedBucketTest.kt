@@ -19,7 +19,9 @@ class UnclippedBucketTest {
     fun theFrameworkOvercountsTheWindowByExactlyTheBucketOverhang() {
         // UsageStatsDatabase.queryUsageStats clamps startIndex to 0 and guards its loop with
         // beginTime < stats.endTime, which is a containment test and never an intersection, and
-        // sUsageStatsCombiner adds whole UsageStats objects.
+        // sUsageStatsCombiner adds whole UsageStats objects. frameworkSum sums each bucket's full
+        // width, which models the worst case where the app was foreground for the whole bucket -
+        // the case the README's "up to 48 hours" refers to.
         val window = 0L..10_000L
         val buckets = listOf(
             -5_000L..2_000L,
