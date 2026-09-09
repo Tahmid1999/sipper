@@ -731,10 +731,13 @@ unclipped buckets overhang. Written at E3, before any device produced it.
 
 SQLDelight 2.3.2 with `deriveSchemaFromMigrations = true` and `verifyMigrations = true`. The initial
 schema is `1.sqm` rather than a `.sq` file, from the first commit, so there is no version zero whose
-upgrade path has to be invented later and `.sq` files hold queries. The generated
-`src/main/sqldelight/databases/1.db` is committed; `verifyMigrations` then fails the build if a query
-stops matching the migrated schema, which is the failure mode a hand-maintained schema hides until a
-user's device is already broken.
+upgrade path has to be invented later and `.sq` files hold queries. No .db snapshot is emitted or committed. Under `deriveSchemaFromMigrations = true`, SQLDelight 2.3.2
+derives the schema from `1.sqm` at generation time and produces no schema file, so there is nothing to
+commit — an earlier draft of this section claimed otherwise. The protection that mattered is
+unaffected, and was observed working rather than assumed: a query naming a column the migrations do
+not define fails `:data:generateMainSipperDatabaseInterface`, which is the failure mode a
+hand-maintained schema hides until a user's device is already broken. `NOTES.md` records the
+observation.
 
 ```kotlin
 sqldelight {

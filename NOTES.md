@@ -263,3 +263,18 @@ also read by `ScreenPowerStatsProcessor` (:63, :65-66, :79).
    them and `provenanceOf` never takes the back-fill branch. The `initDisplays` chain is currently
    exercised only by synthetic fixtures in `BackFillTest` and `ProfileModelTest`. No real-world profile
    has run through it. This is the concrete argument for gate 3.
+
+---
+
+## 2026-09-09 — the committed 1.db does not exist, and the guarantee behind it does
+
+ARCHITECTURE §8 claimed a generated `1.db` was committed and that `verifyMigrations` rested on it.
+SQLDelight 2.3.2 emits no `.db` under `deriveSchemaFromMigrations = true`, so the claim was wrong and
+the artifact was never producible. The guarantee it was supposed to provide was then observed directly
+rather than assumed — a temporary query selecting a nonexistent column failed the build at generation
+time:
+
+    G:/sipper/data/src/main/sqldelight/io/github/tahmid1999/sipper/data/Temp.sq:2:7 No column found with name nonexistent_column
+
+The temporary query was deleted and never committed. The schema is derived from `1.sqm`, so the check
+runs against the migrations themselves.
