@@ -112,3 +112,34 @@ is planned separately after this is reviewed.
 1. Do ONE step. 2. Aider auto-commits. 3. Human reviews the diff (Claude review pass on hard steps).
 4. Next step. Never run ahead. If a build/version conflict appears (e.g. Kotlin 2.4.10 ↔ Gradle 8.13),
 report the exact error and stop — do not silently downgrade a pinned version.
+
+---
+
+# Milestone 2 — `:audit` profile model + verdicts
+
+**Goal:** parse a `power_profile.xml` into a `ProfileModel`, reproduce `getAveragePower`
+(back-fill included), and assign a `Verdict` per key. Still **pure Kotlin JVM** — the JDK's
+`javax.xml` parser is allowed (it's the JDK, not Android, and not a dependency; the purity gate
+keys on Android artifacts, not JDK classes).
+
+**Sources:** ARCHITECTURE §1 (ProfileModel shape), §5 (key table + Effect), §6 (back-fill chain);
+CONTRACT §3 (verdict derivation, already implemented in `verdictFor`).
+
+**Steps — one file each, stop + verify + commit, same rules as milestone 1:**
+
+- **2a. `Provenance.kt`** — `Provenance` (Declared/BackFilled/NotDeclared), `Transform`
+  (Identity/PerDisplay/ModemDrain), `BackFill` data class. Verbatim from ARCHITECTURE §6, with `public`.
+- **2b. `ProfileParser.kt`** — parse `power_profile.xml` text → `declared: Map<String, List<Double>>`
+  (a `LinkedHashMap`, preserving file order and `<array>` shape). Use `javax.xml` `DocumentBuilder`.
+  Handle `<item name="k">v</item>` (single value) and `<array name="k"><value>v</value>…</array>`.
+- **2c. `KeyTable.kt` + `keytable.tsv`** — `KeyFact`, `Cite`, `Effect` (ARCHITECTURE §5), plus a loader
+  reading `audit/src/main/resources/keytable.tsv`. Then the TSV rows from §5's table.
+- **2d. `BackFill.kt`** — the `initDisplays` (3 steps) + `initModem` chain model from §6:
+  `(declared, apiLevel) -> Provenance` for a key.
+- **2e. `ProfileModel.kt`** — `averagePower(key)` (reproduces `getAveragePower`, back-fill included),
+  `provenance(key)`, `audit()`; plus `ProfileAudit` (key -> Verdict). Verdicts reuse `verdictFor`.
+- **2f. Tests** — parser, back-fill chain, and verdicts against a small synthetic profile.
+  (AOSP-default and emulator-probe fixtures for gates 2 and 3 come in a later milestone — they need
+  real XML captures.)
+
+Same lean context: CONTRACT + ARCHITECTURE + plan. Pre-decide every case in the prompt.
