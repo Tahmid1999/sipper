@@ -234,3 +234,32 @@ Also missing co-readers, now recorded: `cpu.idle` is read by `WakelockPowerCalcu
 `processor/WakelockPowerStatsProcessor.java:29` besides `IdlePowerCalculator.java:43`;
 `gps.signalqualitybased` has a second read at `BatteryStatsImpl.java:7660`; the three display keys are
 also read by `ScreenPowerStatsProcessor` (:63, :65-66, :79).
+
+## 2026-09-09 — gate 2 findings and one README claim in doubt
+
+1. Gate 2's derived absent set was verified independently against the fixtures by grep, not taken from
+   the test's own output. The four keys it reports absent — `bluetooth.controller.rx`,
+   `bluetooth.controller.voltage`, `cpu.suspend`, `modem.controller.sleep` — have zero occurrences in
+   both `aosp-defaults/34/power_profile.xml` and `aosp-defaults/36/power_profile.xml`. Ten spot-checked
+   keys the gate does not report absent are each declared once. `requiredKeys(34)` and
+   `requiredKeys(36)` are the same 25 keys, which is why both fixtures produce an identical absent set.
+
+2. Only 4 of 25 required keys are absent from the AOSP default. The rest are declared, many as a literal
+   zero, so the dominant verdict against the AOSP default is `ZERO_BY_EXPLICIT_VALUE` and not
+   `ZERO_BY_ABSENCE`. The README's "24 of 47 probed real keys return 0.0" does not separate those two
+   cases, which is the distinction the four verdicts exist for. Gate 2 now measures the split.
+
+3. A README and ARCHITECTURE §6 claim is in doubt. Both state that the API 36 emulator's
+   `power_profile.xml` contains only `screen.on` and no per-display key, and that
+   `getAveragePower("screen.on.display0")` nonetheless returns 0.1 — the back-fill demonstration. The
+   AOSP default at `android-16.0.0_r1`, `core/res/res/xml/power_profile.xml`, is the opposite:
+   `screen.on.display0` is declared and `screen.on` is absent. The emulator resolves `framework-res.apk`,
+   which a device overlay can replace, so the two files need not be the same — but the documents do not
+   distinguish them, and if the emulator's own profile declares `screen.on.display0` then that 0.1 is a
+   declared read rather than a back-fill. **UNRESOLVED** until the profile is pulled off the emulator
+   with adb. Do not repair the claim by editing the sentence; the measurement has to be redone.
+
+4. Because both AOSP default fixtures declare per-display keys, `declaredDisplayCount` is non-zero for
+   them and `provenanceOf` never takes the back-fill branch. The `initDisplays` chain is currently
+   exercised only by synthetic fixtures in `BackFillTest` and `ProfileModelTest`. No real-world profile
+   has run through it. This is the concrete argument for gate 3.
