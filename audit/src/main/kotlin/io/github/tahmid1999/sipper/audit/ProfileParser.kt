@@ -1,33 +1,70 @@
 package io.github.tahmid1999.sipper.audit
 
 import java.io.StringReader
-import javax.xml.parsers.DocumentBuilderFactory
-import org.w3c.dom.Element
-import org.xml.sax.InputSource
+import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.XMLStreamConstants
 
-public fun parseProfile(xml: String): Map<String, List<Double>> {
-    val factory = DocumentBuilderFactory.newInstance().apply {
-        isNamespaceAware = false
-        setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+public data class ParsedProfile(
+    val declared: Map<String, List<Double>>,
+    val lines: Map<String, Int>,
+)
+
+public fun parseProfile(xml: String): ParsedProfile {
+    val factory = XMLInputFactory.newInstance().apply {
+        setProperty(XMLInputFactory.SUPPORT_DTD, false)
+        setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false)
     }
-    val doc = factory.newDocumentBuilder().parse(InputSource(StringReader(xml)))
+    val reader = factory.createXMLStreamReader(StringReader(xml))
     val declared = LinkedHashMap<String, List<Double>>()
-    val children = doc.documentElement.childNodes
-    for (i in 0 until children.length) {
-        val node = children.item(i)
-        if (node !is Element) continue
-        val key = node.getAttribute("name")
-        when (node.tagName) {
-            "item" -> declared[key] = listOf(node.textContent.trim().toDouble())
-            "array" -> {
-                val values = ArrayList<Double>()
-                val valueNodes = node.getElementsByTagName("value")
-                for (j in 0 until valueNodes.length) {
-                    values.add(valueNodes.item(j).textContent.trim().toDouble())
+    val lines = LinkedHashMap<String, Int>()
+    var key: String? = null
+    var line = 0
+    var inArray = false
+    val values = ArrayList<Double>()
+    val text = StringBuilder()
+    try {
+        while (reader.hasNext()) {
+            when (reader.next()) {
+                XMLStreamConstants.START_ELEMENT -> when (reader.localName) {
+                    "item" -> {
+                        key = reader.getAttributeValue(null, "name")
+                        line = reader.location.lineNumber
+                        inArray = false
+                        text.setLength(0)
+                    }
+                    "array" -> {
+                        key = reader.getAttributeValue(null, "name")
+                        line = reader.location.lineNumber
+                        inArray = true
+                        values.clear()
+                    }
+                    "value" -> text.setLength(0)
                 }
-                declared[key] = values
+                XMLStreamConstants.CHARACTERS, XMLStreamConstants.CDATA -> text.append(reader.text)
+                XMLStreamConstants.END_ELEMENT -> when (reader.localName) {
+                    "item" -> {
+                        val k = key
+                        if (k != null) {
+                            declared[k] = listOf(text.toString().trim().toDouble())
+                            lines[k] = line
+                        }
+                        key = null
+                    }
+                    "value" -> if (inArray) values.add(text.toString().trim().toDouble())
+                    "array" -> {
+                        val k = key
+                        if (k != null) {
+                            declared[k] = values.toList()
+                            lines[k] = line
+                        }
+                        key = null
+                        inArray = false
+                    }
+                }
             }
         }
+    } finally {
+        reader.close()
     }
-    return declared
+    return ParsedProfile(declared, lines)
 }

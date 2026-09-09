@@ -15,24 +15,32 @@ class ProfileParserTest {
 
     @Test
     fun parsesBatteryCapacity() {
-        assertEquals(listOf(3000.0), parseProfile(xml)["battery.capacity"])
+        assertEquals(listOf(3000.0), parseProfile(xml).declared["battery.capacity"])
     }
 
     @Test
     fun parsesScreenOn() {
-        assertEquals(listOf(143.0), parseProfile(xml)["screen.on"])
+        assertEquals(listOf(143.0), parseProfile(xml).declared["screen.on"])
     }
 
     @Test
     fun parsesArrayOfValues() {
-        assertEquals(listOf(400000.0, 1200000.0), parseProfile(xml)["cpu.speeds.cluster0"])
+        assertEquals(listOf(400000.0, 1200000.0), parseProfile(xml).declared["cpu.speeds.cluster0"])
     }
 
     @Test
     fun preservesDeclarationOrder() {
         assertEquals(
             listOf("battery.capacity", "screen.on", "cpu.speeds.cluster0"),
-            parseProfile(xml).keys.toList(),
+            parseProfile(xml).declared.keys.toList(),
+        )
+    }
+
+    @Test
+    fun capturesLineNumbers() {
+        assertEquals(
+            mapOf("battery.capacity" to 2, "screen.on" to 3, "cpu.speeds.cluster0" to 4),
+            parseProfile(xml).lines,
         )
     }
 }
