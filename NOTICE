@@ -1,0 +1,10 @@
+sipper
+Copyright 2026 Tahmid Alavi Ishmam
+
+This product includes software developed by The Android Open Source Project.
+
+audit/src/test/resources/aosp-defaults/34/power_profile.xml
+audit/src/test/resources/aosp-defaults/36/power_profile.xml
+    Default power profiles from AOSP platform/frameworks/base, at tags android-14.0.0_r1 and
+    android-16.0.0_r1 respectively, path core/res/res/xml/power_profile.xml. Committed verbatim with
+    their Apache-2.0 headers intact. Licensed under the Apache License, Version 2.0.
