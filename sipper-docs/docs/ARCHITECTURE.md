@@ -458,6 +458,7 @@ a citation with only a line rots on the next commit. The anchor is the match key
 - `M` = `frameworks/base/core/java/com/android/internal/power/ModemPowerProfile.java`
 - `I` = `frameworks/base/core/java/com/android/internal/os/`
 - `S` = `frameworks/base/services/core/java/com/android/server/power/stats/`
+- `B` = `frameworks/base/services/core/java/com/android/server/power/stats/BatteryStatsImpl.java`
 
 The `I` → `S` move is itself a per-release fact: the calculators left `com.android.internal.os` for
 `com.android.server.power.stats` in Android 14, so a table storing one path per calculator would be
@@ -465,50 +466,52 @@ wrong for half the rows.
 
 | key | apis | calculator | effect | tag | file:line |
 | --- | --- | --- | --- | --- | ---: |
-| `battery.capacity` | 26–36 | — (read by `BatteryStatsImpl` and every consumer) | `ZERO_DIVIDES` | android-16.0.0_r1 | `P:254` |
-| `screen.on` | 26–29 | `BatteryStatsHelper.addScreenUsage` | `ZERO_ZEROES_COMPONENT` | android-9.0.0_r61 | `I/BatteryStatsHelper.java:521` |
-| `screen.on` | 30–33 | `ScreenPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-12.0.0_r34 | `I/ScreenPowerCalculator.java:118` |
-| `screen.on` | 34–36 | — (back-fill source) | `NOT_READ` | android-14.0.0_r1 | `P:436` |
-| `screen.on.display0` | 34–36 | `ScreenPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/ScreenPowerCalculator.java:141` |
-| `screen.full` | 26–33 | `ScreenPowerCalculator` | `ZERO_ZEROES_TERM` | android-12.0.0_r34 | `I/ScreenPowerCalculator.java:126` |
-| `screen.full.display0` | 34–36 | `ScreenPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/ScreenPowerCalculator.java:149` |
-| `ambient.on` | 28–33 | `AmbientDisplayPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-12.0.0_r34 | `I/AmbientDisplayPowerCalculator.java:57` |
-| `ambient.on.display0` | 34–36 | `AmbientDisplayPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/AmbientDisplayPowerCalculator.java:61` |
-| `cpu.suspend` | 28–36 | `CpuPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/CpuPowerCalculator.java:212` |
-| `cpu.idle` | 28–36 | `CpuPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/CpuPowerCalculator.java:219` |
-| `cpu.active` | 26–29 | `CpuPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-9.0.0_r61 | `I/CpuPowerCalculator.java:96` |
-| `cpu.cluster_power.cluster0` | 30–36 | `CpuPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/CpuPowerCalculator.java:158` |
-| `cpu.core_power.cluster0` | 30–36 | `CpuPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/CpuPowerCalculator.java:166` |
-| `wifi.controller.idle` | 26–36 | `WifiPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:74` |
-| `wifi.controller.rx` | 26–36 | `WifiPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:75` |
-| `wifi.controller.tx` | 26–36 | `WifiPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:76` |
-| `wifi.controller.voltage` | 26–36 | `WifiPowerCalculator` | `ZERO_DIVIDES` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:81` |
-| `wifi.on` / `wifi.active` | 26–36 | `WifiPowerCalculator` (legacy branch) | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:196` |
-| `radio.active` | 26–33 | `MobileRadioPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-12.0.0_r34 | `I/MobileRadioPowerCalculator.java:71` |
-| `radio.active` | 34–36 | — (back-fill source) | `NOT_READ` | android-16.0.0_r1 | `P:512` |
-| `modem.controller.sleep` | 34–36 | `MobileRadioPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `M:88` |
-| `modem.controller.voltage` | 31–36 | `MobileRadioPowerCalculator` | `ZERO_DIVIDES` | android-16.0.0_r1 | `S/MobileRadioPowerCalculator.java:113` |
-| `dsp.audio` | 26–36 | `AudioPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/AudioPowerCalculator.java:44` |
-| `dsp.video` | 26–36 | `VideoPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/VideoPowerCalculator.java:44` |
-| `camera.avg` | 26–36 | `CameraPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/CameraPowerCalculator.java:44` |
-| `camera.flashlight` | 26–36 | `FlashlightPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/FlashlightPowerCalculator.java:44` |
-| `gps.on` | 26–36 | `GnssPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/GnssPowerCalculator.java:62` |
-| `gps.signalqualitybased` | 30–36 | `GnssPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/GnssPowerCalculator.java:71` |
-| `gps.voltage` | 30–36 | `GnssPowerCalculator` | `ZERO_DIVIDES` | android-16.0.0_r1 | `S/GnssPowerCalculator.java:77` |
-| `memory.bandwidths` | 28–36 | `MemoryPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/MemoryPowerCalculator.java:58` |
-| `bluetooth.controller.rx` | 26–36 | `BluetoothPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/BluetoothPowerCalculator.java:97` |
-| `bluetooth.controller.voltage` | 26–36 | `BluetoothPowerCalculator` | `ZERO_DIVIDES` | android-16.0.0_r1 | `S/BluetoothPowerCalculator.java:103` |
+| `battery.capacity` | 26–36 | `BatteryStatsImpl` | `ZERO_DIVIDES` | android-16.0.0_r1 | `B:11519` |
+| `screen.on` | 26–29 | `BatteryStatsHelper.addScreenUsage` | `ZERO_ZEROES_COMPONENT` | android-9.0.0_r61 | `I/BatteryStatsHelper.java:631` |
+| `screen.on` | 30–33 | `ScreenPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-12.0.0_r34 | `I/ScreenPowerCalculator.java:54` |
+| `screen.on` | 34–36 | | `NOT_READ` | android-14.0.0_r1 | `P:175` |
+| `screen.on.display0` | 34–36 | `ScreenPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/ScreenPowerCalculator.java:59` |
+| `screen.full` | 26–29 | `BatteryStatsHelper.addScreenUsage` | `ZERO_ZEROES_TERM` | android-9.0.0_r61 | `I/BatteryStatsHelper.java:633` |
+| `screen.full` | 30–33 | `ScreenPowerCalculator` | `ZERO_ZEROES_TERM` | android-12.0.0_r34 | `I/ScreenPowerCalculator.java:56` |
+| `screen.full.display0` | 34–36 | `ScreenPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/ScreenPowerCalculator.java:61` |
+| `ambient.on` | 28–33 | `AmbientDisplayPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-12.0.0_r34 | `I/AmbientDisplayPowerCalculator.java:36` |
+| `ambient.on.display0` | 34–36 | `AmbientDisplayPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/AmbientDisplayPowerCalculator.java:44` |
+| `cpu.suspend` | 28–36 | `IdlePowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/IdlePowerCalculator.java:40` |
+| `cpu.idle` | 28–36 | `IdlePowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/IdlePowerCalculator.java:43` |
+| `cpu.active` | 26–29 | `CpuPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-9.0.0_r61 | `I/CpuPowerCalculator.java:54` |
+| `cpu.cluster_power.cluster0` | 30–36 | | `NOT_READ` | android-16.0.0_r1 | `P:575` |
+| `cpu.core_power.cluster0` | 30–36 | | `NOT_READ` | android-16.0.0_r1 | `P:581` |
+| `wifi.controller.idle` | 26–36 | `WifiPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:70` |
+| `wifi.controller.rx` | 26–36 | `WifiPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:74` |
+| `wifi.controller.tx` | 26–36 | `WifiPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:72` |
+| `wifi.controller.voltage` | 26–36 | `BatteryStatsImpl` | `ZERO_DIVIDES` | android-16.0.0_r1 | `B:12688` |
+| `wifi.on` | 26–36 | `WifiPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:64` |
+| `wifi.active` | 26–36 | `WifiPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/WifiPowerCalculator.java:335` |
+| `radio.active` | 26–33 | `MobileRadioPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-12.0.0_r34 | `I/MobileRadioPowerCalculator.java:54` |
+| `radio.active` | 34–36 | `MobileRadioPowerCalculator` | `ZERO_SELECTS_FALLBACK` | android-16.0.0_r1 | `S/MobileRadioPowerCalculator.java:89` |
+| `modem.controller.sleep` | 34–36 | `BatteryStatsImpl` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `B:12838` |
+| `modem.controller.voltage` | 31–36 | `BatteryStatsImpl` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `B:12834` |
+| `audio` | 26–36 | `AudioPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/AudioPowerCalculator.java:45` |
+| `video` | 26–36 | `VideoPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/VideoPowerCalculator.java:42` |
+| `camera.avg` | 26–36 | `CameraPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/CameraPowerCalculator.java:38` |
+| `camera.flashlight` | 26–36 | `FlashlightPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/FlashlightPowerCalculator.java:36` |
+| `gps.on` | 26–36 | `GnssPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/GnssPowerCalculator.java:36` |
+| `gps.signalqualitybased` | 30–36 | `BatteryStatsImpl` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `B:7660` |
+| `gps.voltage` | 30–36 | `BatteryStatsImpl` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `B:7651` |
+| `memory.bandwidths` | 28–36 | `MemoryPowerCalculator` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `S/MemoryPowerCalculator.java:36` |
+| `bluetooth.controller.rx` | 26–36 | `BluetoothPowerCalculator` | `ZERO_ZEROES_TERM` | android-16.0.0_r1 | `S/BluetoothPowerCalculator.java:60` |
+| `bluetooth.controller.voltage` | 26–36 | `BatteryStatsImpl` | `ZERO_ZEROES_COMPONENT` | android-16.0.0_r1 | `B:13525` |
 
-`ZERO_DIVIDES` is the row family I did not expect and the one worth reading the table for. The
-controller calculators convert charge to mAh by dividing by an operating voltage read straight from
-the profile:
-
-```java
-final double voltage = profile.getAveragePower(POWER_WIFI_CONTROLLER_OPERATING_VOLTAGE) / 1000;
-```
-
-`wifi.controller.voltage` is declared as a literal `0` in the AOSP placeholder, and a declared zero
-there produces `Infinity`, or `NaN` where the numerator is also zero.
+`ZERO_DIVIDES` is now one key, not a family of four, and it is still the row worth reading the
+table for. `wifi.controller.voltage` divides, and the division sits outside its own guard: the
+`opVolt != 0` check opens at `BatteryStatsImpl:12690` and closes at `:12694`, while the division at
+`:12698` is conditioned only on `mTmpRailStats != null`. `opVolt` is a `double`, so `long / 0.0`
+yields `Infinity`, and `(long) Infinity` is `Long.MAX_VALUE`, which flows into `addCountLocked` at
+`:12700-12701` and into `mHistory.recordWifiConsumedCharge` at `:12702-12703`. A declared
+`wifi.controller.voltage` of `0` therefore writes `Long.MAX_VALUE` into the monitored-rail counter
+and into battery history, silently. The other three operating-voltage keys — `gps.voltage`,
+`modem.controller.voltage` and `bluetooth.controller.voltage` — are gates or guarded divisors and
+are now `ZERO_ZEROES_COMPONENT`.
 
 ### Keeping the citations honest
 
@@ -517,7 +520,7 @@ Each row is read off the checked-out tag by hand at E1 and the terminal transcri
 whose line I have not opened myself does not go in the table; a short table I have read is worth
 more than a long one where one line is guessed. Verification by a host-side fetch-and-rewrite tool
 was cut: it needs network access to a host CI has no business depending on, so nothing would have
-enforced it, and a tool that can be wrong about a 33-row table is a second thing to check.
+enforced it, and a tool that can be wrong about a 35-row table is a second thing to check.
 
 The table in this document is generated from `audit/src/main/resources/keytable.tsv` by
 `./gradlew :audit:keyTableDoc`, so the document cannot drift from the data the model reads. The
