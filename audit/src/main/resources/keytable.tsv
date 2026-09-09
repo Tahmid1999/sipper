@@ -1,0 +1,35 @@
+key	apiLo	apiHi	calculator	effect	citeTag	citeFile	citeLine	citeAnchor
+battery.capacity	26	36		ZERO_DIVIDES	android-16.0.0_r1	frameworks/base/core/java/com/android/internal/os/PowerProfile.java	254	
+screen.on	26	29	BatteryStatsHelper.addScreenUsage	ZERO_ZEROES_COMPONENT	android-9.0.0_r61	frameworks/base/core/java/com/android/internal/os/BatteryStatsHelper.java	521	
+screen.on	30	33	ScreenPowerCalculator	ZERO_ZEROES_COMPONENT	android-12.0.0_r34	frameworks/base/core/java/com/android/internal/os/ScreenPowerCalculator.java	118	
+screen.on	34	36		NOT_READ	android-14.0.0_r1	frameworks/base/core/java/com/android/internal/os/PowerProfile.java	436	
+screen.on.display0	34	36	ScreenPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/ScreenPowerCalculator.java	141	
+screen.full	26	33	ScreenPowerCalculator	ZERO_ZEROES_TERM	android-12.0.0_r34	frameworks/base/core/java/com/android/internal/os/ScreenPowerCalculator.java	126	
+screen.full.display0	34	36	ScreenPowerCalculator	ZERO_ZEROES_TERM	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/ScreenPowerCalculator.java	149	
+ambient.on	28	33	AmbientDisplayPowerCalculator	ZERO_ZEROES_COMPONENT	android-12.0.0_r34	frameworks/base/core/java/com/android/internal/os/AmbientDisplayPowerCalculator.java	57	
+ambient.on.display0	34	36	AmbientDisplayPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/AmbientDisplayPowerCalculator.java	61	
+cpu.suspend	28	36	CpuPowerCalculator	ZERO_ZEROES_TERM	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/CpuPowerCalculator.java	212	
+cpu.idle	28	36	CpuPowerCalculator	ZERO_ZEROES_TERM	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/CpuPowerCalculator.java	219	
+cpu.active	26	29	CpuPowerCalculator	ZERO_ZEROES_COMPONENT	android-9.0.0_r61	frameworks/base/core/java/com/android/internal/os/CpuPowerCalculator.java	96	
+cpu.cluster_power.cluster0	30	36	CpuPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/CpuPowerCalculator.java	158	
+cpu.core_power.cluster0	30	36	CpuPowerCalculator	ZERO_ZEROES_TERM	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/CpuPowerCalculator.java	166	
+wifi.controller.idle	26	36	WifiPowerCalculator	ZERO_SELECTS_FALLBACK	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/WifiPowerCalculator.java	74	
+wifi.controller.rx	26	36	WifiPowerCalculator	ZERO_SELECTS_FALLBACK	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/WifiPowerCalculator.java	75	
+wifi.controller.tx	26	36	WifiPowerCalculator	ZERO_SELECTS_FALLBACK	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/WifiPowerCalculator.java	76	
+wifi.controller.voltage	26	36	WifiPowerCalculator	ZERO_DIVIDES	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/WifiPowerCalculator.java	81	
+wifi.on	26	36	WifiPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/WifiPowerCalculator.java	196	
+wifi.active	26	36	WifiPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/WifiPowerCalculator.java	196	
+radio.active	26	33	MobileRadioPowerCalculator	ZERO_ZEROES_COMPONENT	android-12.0.0_r34	frameworks/base/core/java/com/android/internal/os/MobileRadioPowerCalculator.java	71	
+radio.active	34	36		NOT_READ	android-16.0.0_r1	frameworks/base/core/java/com/android/internal/os/PowerProfile.java	512	
+modem.controller.sleep	34	36	MobileRadioPowerCalculator	ZERO_ZEROES_TERM	android-16.0.0_r1	frameworks/base/core/java/com/android/internal/power/ModemPowerProfile.java	88	
+modem.controller.voltage	31	36	MobileRadioPowerCalculator	ZERO_DIVIDES	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/MobileRadioPowerCalculator.java	113	
+dsp.audio	26	36	AudioPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/AudioPowerCalculator.java	44	
+dsp.video	26	36	VideoPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/VideoPowerCalculator.java	44	
+camera.avg	26	36	CameraPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/CameraPowerCalculator.java	44	
+camera.flashlight	26	36	FlashlightPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/FlashlightPowerCalculator.java	44	
+gps.on	26	36	GnssPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/GnssPowerCalculator.java	62	
+gps.signalqualitybased	30	36	GnssPowerCalculator	ZERO_SELECTS_FALLBACK	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/GnssPowerCalculator.java	71	
+gps.voltage	30	36	GnssPowerCalculator	ZERO_DIVIDES	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/GnssPowerCalculator.java	77	
+memory.bandwidths	28	36	MemoryPowerCalculator	ZERO_ZEROES_COMPONENT	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/MemoryPowerCalculator.java	58	
+bluetooth.controller.rx	26	36	BluetoothPowerCalculator	ZERO_ZEROES_TERM	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/BluetoothPowerCalculator.java	97	
+bluetooth.controller.voltage	26	36	BluetoothPowerCalculator	ZERO_DIVIDES	android-16.0.0_r1	frameworks/base/services/core/java/com/android/server/power/stats/BluetoothPowerCalculator.java	103	
