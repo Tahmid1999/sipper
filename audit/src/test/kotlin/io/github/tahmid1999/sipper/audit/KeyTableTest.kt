@@ -40,15 +40,17 @@ class KeyTableTest {
     }
 
     @Test
-    fun keyTableHasThirtyFourRows() {
-        assertEquals(34, keyTable().size)
+    fun keyTableHasThirtyFiveRows() {
+        // screen.full 26-33 is split into 26-29 and 30-33 (different readers) - KEYTABLE-CORRECTIONS.md section 4.1.
+        assertEquals(35, keyTable().size)
     }
 
     @Test
     fun keyTableBatteryCapacityRow() {
         val row = keyTable().first { it.key == "battery.capacity" }
         assertEquals(Effect.ZERO_DIVIDES, row.effect)
-        assertNull(row.calculator)
+        // battery.capacity is read via PowerProfile.getBatteryCapacity() and stored in BatteryStatsImpl - KEYTABLE-CORRECTIONS.md section 2.
+        assertEquals("BatteryStatsImpl", row.calculator)
         assertEquals(26..36, row.apis)
     }
 
