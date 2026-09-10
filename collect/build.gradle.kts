@@ -10,6 +10,7 @@ android {
 
     defaultConfig {
         minSdk = 28
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -32,6 +33,8 @@ kotlin {
 dependencies {
     implementation(project(":audit"))
     implementation(project(":usage"))
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
 }
 
 // --- Gate: :collect may see :audit and :usage, and nothing else (ARCHITECTURE.md §1) ---
