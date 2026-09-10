@@ -157,32 +157,40 @@ Verify: `.\gradlew.bat :collect:assembleRelease`. Commit: `collect: binary-XML p
 
 ## Step M6-3 — `PowerProfileRoutes.kt`
 
-Three separate functions, never one function with a strategy parameter — their disagreement is the
+Two profile-reading functions that return `Reading<ParsedProfile>`, and one per-key reflection probe.
+Never combine these into a single function with a strategy parameter — their disagreement is the
 finding, and a strategy parameter invites a caller to pick one and move on (ARCHITECTURE §3).
 
-Each returns `Reading<ParsedProfile>` and each carries its own `Route`:
+The two resource readers each return `Reading<ParsedProfile>` and each carry their own `Route`:
 
 | function | mechanism | RouteKind |
 | --- | --- | --- |
 | `readViaSystemResources()` | `Resources.getSystem().getIdentifier("power_profile", "xml", "android")` then `getXml(id)` | `SYSTEM_RESOURCES` |
 | `readViaAndroidPackage(context)` | `context.packageManager.getResourcesForApplication("android")`, same identifier lookup | `ANDROID_PACKAGE_RESOURCES` |
-| `readViaReflection(context)` | `Class.forName("com.android.internal.os.PowerProfile")` | `POWER_PROFILE_REFLECTION` |
+
+The reflection route is a per-key cross-check, not a document reader — it probes individual power values:
+
+```kotlin
+public fun reflectAveragePower(context: Context, key: String): Reading<Double>
+```
+
+It returns `Reading<Double>` because reflection can only retrieve a single keyed value, matching `key_result.reflection_value REAL` in the `:data` schema. The earlier draft returned `Reading<ParsedProfile>` but that was wrong because reflection is a per-key probe.
 
 Rules:
 
 - A resolved id of `0` means the resource does not exist: return
   `Reading.SilentDefault(ParsedProfile(emptyMap(), emptyMap()), DefaultCause.KEY_ABSENT_FROM_PROFILE, route)`.
-- Catch `NoSuchMethodException` **separately from** `SecurityException` on the reflection route.
-  Hidden-API denial arrives as `NoSuchMethodException`, and a tool catching the wrong one reports a
-  denial as "method removed", losing the distinction between blocked and gone. On denial return
-  `Reading.Denied("hidden-api", Grant.Unreachable)`.
-- `readViaReflection` returns `Reading<ParsedProfile>` only if it can produce one; if it can only
-  probe single keys, return `Reading.Denied` rather than inventing a shape. **If that makes the
-  signature awkward, STOP and report it rather than guessing** — the reflection route is a cross-check
-  that never carries a claim, so getting its type wrong is worse than leaving it unwritten.
+- On reflection, use `Class.forName`, get its constructor, instantiate with context, and call
+  `getAveragePower(String)` with the key. Catch `NoSuchMethodException` **separately from**
+  `SecurityException`. Hidden-API denial arrives as `NoSuchMethodException`, and a tool catching the
+  wrong one reports a denial as "method removed", losing the distinction between blocked and gone.
+- Catch `PackageManager.NameNotFoundException` and `Resources.NotFoundException` separately on both
+  resource routes, and return `SilentDefault` the same way the `id==0` case does, since the resource
+  genuinely is not there. Let any other exception propagate — do not catch it, as an unexpected
+  exception must not be silently relabelled as a denial or a default.
 - Every catch records what actually happened. No empty catch blocks anywhere in this file.
 
-Verify: `.\gradlew.bat :collect:assembleRelease`. Commit: `collect: the three power-profile read routes`.
+Verify: `.\gradlew.bat :collect:assembleRelease`. Commit: `collect: reflection is a per-key cross-check, not a document`.
 
 ## Step M6-4 — `UsageAccess.kt`
 
