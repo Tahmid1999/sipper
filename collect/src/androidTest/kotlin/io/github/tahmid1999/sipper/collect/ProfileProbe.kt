@@ -87,17 +87,25 @@ class ProfileProbe {
 
             // Reflect getAveragePower for every key in probe set
             probeSet.forEach { key ->
-                val reflection = reflectAveragePower(context, key)
-                val reflectResult = when (reflection) {
-                    is Reading.Value -> "Value:${reflection.value}"
-                    is Reading.Denied -> "Denied:${reflection.permission}"
-                    is Reading.Absent -> "Absent:${reflection.minApi}"
-                    is Reading.SilentDefault -> "SilentDefault:${reflection.cause}"
+                val reflectResult = try {
+                    when (val reflection = reflectAveragePower(context, key)) {
+                        is Reading.Value -> "Value:${reflection.value}"
+                        is Reading.Denied -> "Denied:${reflection.permission}"
+                        is Reading.Absent -> "Absent:${reflection.minApi}"
+                        is Reading.SilentDefault -> "SilentDefault:${reflection.cause}"
+                    }
+                } catch (e: Throwable) {
+                    // The platform threw rather than returning. Reading has only four constructors
+                    // and none models that, so the probe records it here verbatim - this is the
+                    // shape probe_result.detail exists for in :data.
+                    val cause = (e as? java.lang.reflect.InvocationTargetException)?.targetException ?: e
+                    "Threw:${cause::class.java.name}:${cause.message ?: ""}"
                 }
                 log("reflect", key, reflectResult)
             }
-        } catch (e: Exception) {
-            log("error", e::class.simpleName ?: "Unknown", e.message ?: "")
+        } catch (e: Throwable) {
+            val cause = (e as? java.lang.reflect.InvocationTargetException)?.targetException ?: e
+            log("error", cause::class.java.name, cause.message ?: "")
         }
     }
 

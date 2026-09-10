@@ -87,4 +87,7 @@ reflect	wifi.batchedscan	Value:2.0E-4
 reflect	wifi.controller.idle	Value:0.0
 reflect	wifi.controller.rx	Value:0.0
 reflect	wifi.controller.tx	Value:0.0
-error	InvocationTargetException	
+reflect	wifi.controller.tx_levels	Threw:java.lang.ArrayIndexOutOfBoundsException:length=0; index=0
+reflect	wifi.controller.voltage	Value:0.0
+reflect	wifi.on	Value:0.1
+reflect	wifi.scan	Value:0.1
