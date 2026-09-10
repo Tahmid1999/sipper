@@ -1,5 +1,6 @@
 [versions]
 kotlin = "2.4.10"
+agp = "9.1.0"
 binaryCompat = "0.16.3"
 sqldelight = "2.3.2"
 
@@ -7,6 +8,7 @@ sqldelight = "2.3.2"
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 
 [plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 binaryCompat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompat" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
