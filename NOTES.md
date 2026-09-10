@@ -345,3 +345,17 @@ The on-device probe has run on two targets and both have answered the questions 
 3. The doubt recorded earlier was mine and it was wrong. It rested on the AOSP default at `android-16.0.0_r1`, `core/res/res/xml/power_profile.xml`, which declares `screen.on.display0`. The emulator's `framework-res.apk` is not built from that file, so both are true and the inference from one to the other did not hold. This closes the third item of the entry titled "gate 2 findings and one README claim in doubt".
 
 4. A contrast worth keeping: `dsp.audio` reflects 0.0 on the emulator, where AOSP declares no such key, and 43.0 on the ANE-LX2, where the vendor did. The key-name defect is vendor-specific, not universal.
+
+---
+
+## 2026-09-10 — getAveragePower throws on an empty array, observed
+
+Predicted from source earlier the same day and now observed on a device. `PowerProfile.java:896` at android-16.0.0_r1 is `return sPowerArrayMap.get(type)[0];` with no length check, while the levelled overload guards `values.length == 0` at `:967` and `getNumElements` reads `.length` at `:879`, so the length was available and unused.
+
+On the API 36 emulator, `getAveragePower("wifi.controller.tx_levels")` through the reflection route produced `java.lang.ArrayIndexOutOfBoundsException: length=0; index=0`. The AOSP profile declares that key as an array with no values.
+
+On the ANE-LX2 the same key returns 0.0 instead. The reason is instance 4, not a different framework: both devices' resource routes read `framework-res.apk`, which declares the empty array on both, but `PowerProfile` on the Huawei resolves `/product/etc/xml`, which does not declare the key at all, so the call falls through to the silent 0.0 default. The same empty array is a crash on one device and a silent zero on the other, decided only by which file the framework resolved.
+
+Scope, stated rather than implied: this is reachable through the single-argument `getAveragePower(String)` on an array key, which is what sipper's reflection route calls. Whether the framework itself ever calls the single-argument form on `wifi.controller.tx_levels` has NOT been checked; it plausibly uses the levelled overload, which is guarded. So this is a latent unguarded path, not proof that the framework crashes.
+
+The probe originally hid this. A single try/catch around the whole body turned the throw into one `error` line and silently dropped the last four keys, while the test still reported green. It now catches per key and unwraps `InvocationTargetException` to its cause, so a throw is recorded as a value in the fixture rather than ending the capture. Both fixtures were re-taken after the fix and each now has as many reflect rows as its probe set.

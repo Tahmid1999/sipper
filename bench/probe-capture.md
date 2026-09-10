@@ -22,7 +22,7 @@ Two benchmark fixtures, `ane-lx2-api28.tsv` and `Pixel_9_Pro_XL-api36.tsv`, reco
 - **Device fingerprint:** `google/sdk_gphone64_x86_64/emu64xa:16/BP22.250325.006/13344233:user/release-keys`
 - **API level:** 36
 - **Date:** 2026-09-10
-- **Probe set:** 48 keys; 44 reflect rows (probe incomplete, stopped with InvocationTargetException)
+- **Probe set:** 48 keys; 48 reflect rows
 - **Commands:**
   ```
   adb logcat -c
@@ -30,6 +30,16 @@ Two benchmark fixtures, `ane-lx2-api28.tsv` and `Pixel_9_Pro_XL-api36.tsv`, reco
   adb logcat -d -s SIPPERPROBE:I
   ```
   The emulator was pinned with the `ANDROID_SERIAL` environment variable so the physically-connected phone was never targeted.
+
+## One key throws rather than returning
+
+On the API 36 emulator, `wifi.controller.tx_levels` produced, verbatim:
+
+```
+Threw:java.lang.ArrayIndexOutOfBoundsException:length=0; index=0
+```
+
+The probe records per-key throws rather than aborting, which is why the rest of the capture survived.
 
 ## How the probe set was chosen
 
