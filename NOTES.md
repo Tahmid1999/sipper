@@ -288,3 +288,13 @@ not among the versions ARCHITECTURE pins in libs.versions.toml, so this is not a
 modules were re-checked on 9.3.1 and stayed green. Also, AGP 9.0+ has built-in Kotlin support and
 rejects the org.jetbrains.kotlin.android plugin outright, so that plugin was removed; `kotlin {
 explicitApi(); jvmToolchain(17) }` still works without it.
+
+## 2026-09-10 — line numbers may not survive binary XML
+
+Milestone 2 rewrote the `:audit` parser from DOM to StAX specifically so `Provenance.Declared` could
+carry a real fileLine. The `:collect` resource routes read AAPT2-compiled binary XML through
+`XmlResourceParser`, and compiled resources generally do not preserve source line numbers, so
+`getLineNumber()` may return -1 or nothing useful there. If so, fileLine is meaningless for exactly
+the routes that carry the verdicts. **UNRESOLVED** — it cannot be settled off-device, and must be
+checked in the same session that pulls the emulator's power_profile.xml. Do not change any code over
+this; it is recorded, not fixed.
