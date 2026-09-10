@@ -12,6 +12,13 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ProfileProbe {
 
+    /**
+     * Keys observed declared in a vendor power_profile.xml that no AOSP PowerProfile constant reads.
+     * Probed deliberately: the vendor measured a value and the framework never asks for it, so the
+     * measurement is discarded silently. Recorded here so the probe set says why it contains them.
+     */
+    private val VENDOR_ONLY_KEYS = listOf("dsp.audio", "dsp.video", "cpu.awake", "cpu.active", "cpu.speeds", "wifi.scan", "bluetooth.at", "none")
+
     @Test
     fun probeDeviceProfile() {
         try {
@@ -71,12 +78,12 @@ class ProfileProbe {
                 }
             }
 
-            // Build probe set: union of keyTable keys + declared keys from successful route
+            // Build probe set: union of keyTable keys + declared keys from successful route + vendor-only keys
             val keyTableKeys = keyTable().map { it.key }.toSet()
             val declaredKeys = successfulProfile?.declared?.keys?.toSet() ?: emptySet()
-            val probeSet = (keyTableKeys + declaredKeys).sorted()
+            val probeSet = (keyTableKeys + declaredKeys + VENDOR_ONLY_KEYS).sorted()
 
-            log("probeset", probeSet.size.toString(), "keytable+declared")
+            log("probeset", probeSet.size.toString(), "keytable+declared+vendoronly")
 
             // Reflect getAveragePower for every key in probe set
             probeSet.forEach { key ->
