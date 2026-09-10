@@ -331,3 +331,17 @@ The live `pwi` component set is five: `cell idle scrn uid wifi`. Exactly as clai
 NEW FINDING, and it belongs in the README. The `/product` profile declares `dsp.audio` 43 and `dsp.video` 176, values somebody measured, one carrying a `k3v5` chip comment. But `POWER_AUDIO = "audio"` at `PowerProfile.java:171` in android-9.0.0_r61 and unchanged at android-16.0.0_r1, and `POWER_VIDEO = "video"` at `:177`. No AOSP `PowerProfile` has ever looked up `dsp.audio`. The framework asks for `audio`, the file it is actually pricing from has no such key, and `getAveragePower` returns `0.0` by absence with no log and no throw. Two real measurements discarded over a key name — instance 1 firing on live vendor data rather than on a placeholder.
 
 Still open on this device: whether `XmlResourceParser.getLineNumber()` returns anything usable for the resource routes, and the 47-key `getAveragePower` capture for gate 3. Both need code running on the device, not adb alone.
+
+---
+
+## 2026-09-10 — two open questions answered on device
+
+The on-device probe has run on two targets and both have answered the questions that motivated milestone 7.
+
+1. `XmlResourceParser.getLineNumber()` DOES preserve line numbers on AAPT2-compiled XML. Both devices returned `ambient.on` 30, `screen.on` 31, `screen.full` 32, `bluetooth.active` 33, `bluetooth.on` 34, matching the source lines an aapt2 dump of framework-res.apk shows. The earlier worry that compiled resources would lose line numbers was wrong, and `Provenance.fileLine` is real on both resource routes. The DOM to StAX rewrite in milestone 2 was worth doing. This closes the entry titled "line numbers may not survive binary XML".
+
+2. The README's back-fill demonstration holds, measured. On the API 36 emulator (`google/sdk_gphone64_x86_64/emu64xa:16/BP22.250325.006/13344233`) the profile declares `screen.on`, `screen.full` and `ambient.on` and declares no per-display key at all, yet `getAveragePower` returns 0.1 for `screen.on.display0`, `screen.full.display0` and `ambient.on.display0`. That is `initDisplays` back-filling into ordinal 0, exactly as the README and §6 describe. It also matches what `BackFill.kt` predicts: with no per-display key declared, `declaredDisplayCount` is 0 and the legacy copy fires at API 34 and above.
+
+3. The doubt recorded earlier was mine and it was wrong. It rested on the AOSP default at `android-16.0.0_r1`, `core/res/res/xml/power_profile.xml`, which declares `screen.on.display0`. The emulator's `framework-res.apk` is not built from that file, so both are true and the inference from one to the other did not hold. This closes the third item of the entry titled "gate 2 findings and one README claim in doubt".
+
+4. A contrast worth keeping: `dsp.audio` reflects 0.0 on the emulator, where AOSP declares no such key, and 43.0 on the ANE-LX2, where the vendor did. The key-name defect is vendor-specific, not universal.
