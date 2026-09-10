@@ -311,3 +311,23 @@ can exist. The claim was unsupported from the start. It is replaced by a source-
 deliberately planted `public fun temporaryBareDouble(): Double` before being trusted. Gate 4 remains
 unchanged and continues to guard `:audit` and `:usage`. The source-level gate's stated limitation
 is that it matches single-line signatures, which every function in `:collect` currently is.
+
+---
+
+## 2026-09-10 — instance 4 verified on the ANE-LX2
+
+Everything below was read off the physical ANE-LX2 over adb. Device fingerprint: HUAWEI/ANE-LX2/HWANE:9/HUAWEIANE-L22/9.1.0.353C636:user/release-keys, API 28. Nothing personal was read — ROM files and two dumpsys rows only.
+
+The two-profile claim holds. `/product/etc/xml/power_profile.xml` is 2676 bytes, 17 `<item>` plus 3 `<array>` = 20 keys, pre-Lollipop schema (`cpu.active`, `cpu.awake`, `cpu.idle`, `cpu.speeds`, `dsp.audio`, `dsp.video`, `radio.active`), `battery.capacity` 3000. `framework-res.apk`'s `res/xml/power_profile.xml` carries the complete modern schema (`audio`, `video`, `camera.avg`, `camera.flashlight`, `memory.bandwidths`, `ambient.on`, every `wifi.controller.*` and `modem.controller.*`, `cpu.clusters.cores`, `cpu.speeds.cluster0`, `gps.signalqualitybased`, `gps.voltage`) with `battery.capacity` 1000.
+
+Every figure in the README's instance-4 table verified: `screen.on 143`, `screen.full 414`, `dsp.audio 43` with its `k3v5` comment, three `TBD` comments, `cpu.clusters.cores=1` on an octa-core, `cpu.speeds.cluster0=[400000]`.
+
+One wording fix rather than a numeric one. The README says the AOSP placeholder has "18 keys at 0.1, 16 at 0". Counted as whole keys it is 17 and 11; counted as individual values it is exactly 18 and 16, because `radio.on` contributes one 0.1, `modem.controller.tx` five zeroes and `gps.signalqualitybased` two. The numbers are right and the word "keys" should read "values".
+
+`dumpsys batterystats --checkin` reports `9,0,l,pws,3000,1.77,0,0`. The leading field of a `pws` row is `PowerProfile.getBatteryCapacity()`, so the framework is pricing from `/product/etc/xml` and not from `framework-res.apk`. The README quotes this row with a second field of 0.0157 where the device now reports 1.77; that field is not the capacity and varies, so only the leading 3000 is load-bearing.
+
+The live `pwi` component set is five: `cell idle scrn uid wifi`. Exactly as claimed.
+
+NEW FINDING, and it belongs in the README. The `/product` profile declares `dsp.audio` 43 and `dsp.video` 176, values somebody measured, one carrying a `k3v5` chip comment. But `POWER_AUDIO = "audio"` at `PowerProfile.java:171` in android-9.0.0_r61 and unchanged at android-16.0.0_r1, and `POWER_VIDEO = "video"` at `:177`. No AOSP `PowerProfile` has ever looked up `dsp.audio`. The framework asks for `audio`, the file it is actually pricing from has no such key, and `getAveragePower` returns `0.0` by absence with no log and no throw. Two real measurements discarded over a key name — instance 1 firing on live vendor data rather than on a placeholder.
+
+Still open on this device: whether `XmlResourceParser.getLineNumber()` returns anything usable for the resource routes, and the 47-key `getAveragePower` capture for gate 3. Both need code running on the device, not adb alone.
