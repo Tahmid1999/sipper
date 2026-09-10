@@ -21,7 +21,7 @@
 
 ## Identity & privacy
 - Git author for this repo: Tahmid Alavi Ishmam <tahmidalavi1999@gmail.com>. If you make any git commit, use this identity — never a company address.
-- Never write, keep, or reintroduce the name "tahmid1999" anywhere — package names, folder paths, comments, strings, or commit messages. The package root is defined in ARCHITECTURE.md §1; use exactly that and nothing else.
+- The package root is defined in ARCHITECTURE.md §1. Use exactly that and nothing else. Never introduce any other package root, and never restore a previous one from git history, an old doc, or a stale file — if you find one, report it rather than propagating it.
 
 ## Autonomous milestone runs
 When told to run a milestone from plan.md, work the steps IN ORDER without asking between them:

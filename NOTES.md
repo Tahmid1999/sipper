@@ -12,7 +12,7 @@ and loader. 20 tests green. `./gradlew :audit:check` green including `checkAudit
 `checkAuditIsLeaf`. `audit/api/audit.api` committed — it confirms the negative guarantee: no `copy`
 and no `componentN` on `SilentDefault`, and no accessor added to `Reading`.
 
-Package root moved from `io.github.tahmid1999.sipper` to `io.github.tahmid1999.sipper` across code and docs.
+The package root was renamed to `io.github.tahmid1999.sipper` across code and docs.
 
 ### Parser rewritten from DOM to StAX
 
