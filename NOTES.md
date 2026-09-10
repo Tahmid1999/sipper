@@ -278,3 +278,13 @@ time:
 
 The temporary query was deleted and never committed. The schema is derived from `1.sqm`, so the check
 runs against the migrations themselves.
+
+---
+
+## 2026-09-10 — the Gradle wrapper moved for AGP 9
+
+AGP 9.1.0 required a newer Gradle than the pinned 8.13, so the wrapper was bumped to 9.3.1. Gradle is
+not among the versions ARCHITECTURE pins in libs.versions.toml, so this is not a spec change. All four
+modules were re-checked on 9.3.1 and stayed green. Also, AGP 9.0+ has built-in Kotlin support and
+rejects the org.jetbrains.kotlin.android plugin outright, so that plugin was removed; `kotlin {
+explicitApi(); jvmToolchain(17) }` still works without it.

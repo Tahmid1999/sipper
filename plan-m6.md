@@ -15,6 +15,8 @@ classes; a test that passes because a stub returned a default is worse than no t
 
 ## Two things that may block step 1
 
+0. **Do NOT add the `org.jetbrains.kotlin.android` plugin.** AGP 9.0+ has Kotlin support built in and rejects it outright. An earlier draft of this plan specified it; that was wrong, and the `kotlin { explicitApi(); jvmToolchain(17) }` block works without it.
+
 1. **AGP 9.1.0 against Gradle 8.13.** AGP 9 may require a newer Gradle than the wrapper has. If the
    build says so, **you are pre-authorised to bump the wrapper** with
    `.\gradlew.bat wrapper --gradle-version <the version AGP asks for>` and to commit it. This is the
@@ -36,7 +38,6 @@ agp = "9.1.0"
 and under `[plugins]`:
 ```toml
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ```
 
 **b)** `settings.gradle.kts` — AGP is not on Maven Central. Add `google()` to **both** repository
@@ -59,8 +60,7 @@ dependencyResolutionManagement {
 ```
 and `include(":collect")`.
 
-**c)** Root `build.gradle.kts` — add `alias(libs.plugins.android.library) apply false` and
-`alias(libs.plugins.kotlin.android) apply false`.
+**c)** Root `build.gradle.kts` — add `alias(libs.plugins.android.library) apply false`.
 
 **d)** Create `collect/build.gradle.kts`:
 
@@ -69,7 +69,6 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.binaryCompat)
 }
 
@@ -126,6 +125,9 @@ tasks.named("check") {
 Verify: `.\gradlew.bat projects` lists `:collect`, then `.\gradlew.bat :collect:assembleRelease`.
 If either fails on a version or SDK problem, apply the pre-authorised fix above and say what you did.
 Commit: `collect: android library scaffold with the dependency gate`.
+
+Step M6-1 is DONE (commit 64be5bf). The wrapper was bumped 8.13 -> 9.3.1 because AGP 9.1.0 required
+it; all four modules stayed green on it.
 
 ## Step M6-2 — `ProfileXmlReader.kt`
 
