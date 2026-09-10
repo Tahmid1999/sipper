@@ -83,10 +83,12 @@ hands them over. §7.
 ### `:collect`
 
 Every method on every collector returns `Reading<T>`. There is no method here that returns a bare
-`Double`, `Boolean` or `Long` sourced from the platform, and the API-surface gate (§10, gate 4) is
-what keeps that true. Collectors are ordinary classes taking a `Context`; there are no interfaces,
-because each has exactly one implementation and a second one would be a fixture, which is what
-`:audit`'s and `:usage`'s own test source sets are for.
+`Double`, `Boolean` or `Long` sourced from the platform, and a source-level gate in
+`collect/build.gradle.kts`, `checkCollectReturnsReading`, is what keeps that true. It fails the
+build if a public function in `:collect` declares a bare `Double`, `Boolean` or `Long` return type.
+Collectors are ordinary classes taking a `Context`; there are no interfaces, because each has
+exactly one implementation and a second one would be a fixture, which is what `:audit`'s and
+`:usage`'s own test source sets are for.
 
 The three power-profile read routes live here as three separate functions rather than one function
 with a strategy parameter, because their disagreement is the finding and a strategy parameter

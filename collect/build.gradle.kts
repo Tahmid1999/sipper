@@ -2,7 +2,6 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.binaryCompat)
 }
 
 android {
@@ -50,6 +49,26 @@ val checkCollectDependencies by tasks.registering {
     }
 }
 
+// --- Gate: no platform read returns a bare value (ARCHITECTURE.md §3) ---
+// binary-compatibility-validator produces no .api file for an Android library, so the api-surface
+// gate that covers :audit and :usage cannot cover this module. This reads the source instead.
+// explicitApi() guarantees every public function declares its return type, which is what makes a
+// source-level check reliable here. Limitation, stated rather than hidden: the pattern matches a
+// signature written on one line, which every function in this module currently is.
+val checkCollectReturnsReading by tasks.registering {
+    val sources = fileTree("src/main/kotlin") { include("**/*.kt") }
+    inputs.files(sources)
+    doLast {
+        val bare = Regex("""public\s+fun\s+\w+\s*\([^)]*\)\s*:\s*(Double|Boolean|Long)\b""")
+        val offenders = sources.files.flatMap { file ->
+            bare.findAll(file.readText()).map { "${file.name}: ${it.value.trim()}" }
+        }
+        require(offenders.isEmpty()) {
+            "a platform read returns a bare Double/Boolean/Long instead of a Reading: $offenders"
+        }
+    }
+}
+
 tasks.named("check") {
-    dependsOn(checkCollectDependencies)
+    dependsOn(checkCollectDependencies, checkCollectReturnsReading)
 }
