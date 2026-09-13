@@ -961,37 +961,53 @@ form pins the finding as a fact that must keep being true, and tells me the day 
 
 ### 3. Back-fill correctness, replayed against captured device results
 
-Fixtures: `audit/src/test/resources/probes/Pixel_9_Pro_XL-36/`, holding the verbatim capture
-(`capture.tsv`, 48 reflect rows taken live from `getAveragePower` on the API 36 emulator), the
-`power_profile.xml` that emulator's runtime actually resolves, and the aapt2 dump it was rebuilt
-from. The earlier text said 47 rows and named an API 34 fixture; no 47-key list exists anywhere in
-this repository and no API 34 capture exists — the only API 34 AVD is arm64 on an x86_64 host, which
-cannot boot. Both numbers are corrected here rather than reconstructed. The gate replays
-`ProfileModel(xml, 36).averagePower(key)` against every captured row. One row
-(`wifi.controller.tx_levels`) threw on the device rather than returning; the gate asserts the model
-produces no value for it either, and states the exception-class divergence rather than smoothing it.
+Two committed fixtures, one per target, neither substitutable for the other:
 
-The XML a runtime resolves is not always the one in `framework-res.apk`: this emulator's framework
+- `probes/Pixel_9_Pro_XL-36/` — the API 36 emulator, where back-fill applies: the verbatim capture
+  (`capture.tsv`, 48 reflect rows taken live from `getAveragePower`), the `power_profile.xml` that
+  emulator's runtime actually resolves, and the aapt2 dump it was rebuilt from. The earlier text
+  said 47 rows and named an API 34 fixture; no 47-key list exists anywhere in this repository and no
+  API 34 capture exists — the only API 34 AVD is arm64 on an x86_64 host, which cannot boot. Both
+  numbers are corrected here rather than reconstructed. The gate replays
+  `ProfileModel(xml, 36).averagePower(key)` against every captured row. One row
+  (`wifi.controller.tx_levels`) threw on the device rather than returning; the gate asserts the
+  model produces no value for it either, and states the exception-class divergence rather than
+  smoothing it.
+- `probes/AneLx2-28/` — the ANE-LX2 at API 28, where no back-fill exists and what the replay pins is
+  the silent default itself, plus the two findings that live on that phone. The replay XML is the
+  vendor's own `/product/etc/xml/power_profile.xml` (20 keys, capacity 3000), the file the
+  framework prices from; the committed framework-res dump is the 35-key file the resource routes
+  return. The two files disagree on all 13 keys they share — instance 4, asserted mechanically —
+  and `dsp.audio` 43 / `dsp.video` 176 are declared by a file no AOSP `PowerProfile` reads while
+  the `audio`/`video` keys it does read are absent — instance 1 on live vendor data, asserted
+  mechanically. The same empty array that throws on the API 36 emulator is a silent `0.0` here,
+  because `/product` does not declare it.
+
+The XML a runtime resolves is not always the one in `framework-res.apk`: the emulator's framework
 resources are replaced at runtime by an auto-generated product overlay
 (`framework-res__sdk_gphone64_x86_64__auto_generated_rro_product.apk`), whose `power_profile.xml`
-declares the deprecated singular keys while the base APK declares the per-display ones. The
-fixture's XML is the overlay's file, so the replay proves something about what the framework
-actually read. The gate's integrity checks pin that: the XML's declared key set and the capture's
-`declared` rows must agree, and its line numbers must match the `line` rows the probe logged.
+declares the deprecated singular keys while the base APK declares the per-display ones; and on the
+Huawei the runtime's `PowerProfile` resolves `/product/etc/xml` while the resource routes return
+`framework-res.apk`. The fixture XML is what the framework in question actually read in each case.
+The gates' integrity checks pin that: each fixture's key set and line numbers must match the
+capture's `declared` and `line` rows for the file those rows document.
 
-The gate replays `ProfileModel(xml, api).averagePower(key)` and requires exact `Double` equality.
+The gates replay `ProfileModel(xml, api).averagePower(key)` and require exact `Double` equality.
 Not a tolerance: both sides are parses of the same decimal literal, and a tolerance is what would
 hide a back-fill returning a plausible neighbour instead of the right value.
 
 The load-bearing row is `screen.on.display0 → 0.1` against an XML declaring `screen.on` and nothing
 per-display. Without the chain model the replay returns `0.0` and the gate goes red — verified by
 deleting `initDisplays` from the model and watching it, 2026-09-13, and re-verified the same day
-against this fixture (2 tests red: the replay row and the load-bearing provenance row).
+against this fixture (2 tests red: the replay row and the load-bearing provenance row). The ANE
+fixture was verified red the same day with array selection sabotaged to element-last, which is the
+API 28 fixture's load-bearing behaviour (`PowerProfile.java:896` takes element 0 unconditionally).
 
-The honest limitation: this gate cannot regenerate itself in CI, because the runner has no emulator.
-The fixture is committed data. `bench/probe-capture.md` records the adb invocation and the emulator
-image build id, so the numbers have a provenance rather than an origin story — splitline taught me
-that when a hand-edited CSV passed a chart check.
+The honest limitation: these gates cannot regenerate themselves in CI, because the runner has no
+emulator and no phone. The fixtures are committed data. `bench/probe-capture.md` records the adb
+invocation and the image build id or device fingerprint for each, so the numbers have a provenance
+rather than an origin story — splitline taught me that when a hand-edited CSV passed a chart check.
+
 
 
 ### 4. API surface

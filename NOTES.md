@@ -348,6 +348,45 @@ The on-device probe has run on two targets and both have answered the questions 
 
 ---
 
+## 2026-09-13 — the ANE-LX2 fixture: instance 4 and instance 1 are now gates
+
+The phone was connected, so gate 3 gained its second fixture — `AneLx2ReplayTest`, 6 tests, `:audit`
+now at 49. Both files behind instance 4 were pulled and committed:
+
+- `/product/etc/xml/power_profile.xml`, verbatim, 2676 bytes, 20 keys. It matches the 2026-09-10
+  record figure for figure (screen.on 143, dsp.audio 43 k3v5, capacity 3000, the TBDs), so two
+  independent reads agree. This is the replay XML.
+- `framework-res.apk`'s profile, as an aapt2 xmltree dump: 35 keys, capacity 1000 — the file the
+  resource routes return, pinned to the capture's 35 `declared` keys and all five `line` numbers.
+
+The gate makes the two README findings mechanical, so they cannot silently rot: all 13 keys the
+files share disagree in value (`theTwoProfilesDisagreeOnEverySharedKey` — instance 4), and
+`dsp.audio` 43 / `dsp.video` 176 are PRESENT in a file no AOSP `PowerProfile` reads while `audio`
+and `video`, which it does read, are ZERO_BY_ABSENCE (`theVendorMeasuredKeysTheFrameworkNeverReads`
+— instance 1 on live vendor data). The 50-row replay pins the silent default itself: every
+captured value reproduces exactly, including `wifi.controller.tx_levels → 0.0` — silent here, the
+ArrayIndexOutOfBoundsException on the API 36 emulator, because `/product` never declared the key.
+
+Observed red before trusted, same protocol as the emulator gate: array selection sabotaged to
+`.last()` made the 50-row replay fail at the first array key (element 0 is the framework's own
+behaviour, `PowerProfile.java:896`); model restored byte-identical (`git diff` empty).
+
+Tooling finding on the way: build-tools 36.0.0's aapt2 cannot open this EMUI-era framework-res.apk
+(`failed opening zip: Invalid file`, though the ZIP magic and 7862 entries are intact and
+PowerShell's ZipFile reads it); 35.0.1's aapt2 reads it fine. The older tool was used for the ANE
+dump. The same failure had been seen from 36.1.0-rc1 on the emulator's APK; it is not an rc-only
+regression.
+
+Two deliberate asymmetries with the emulator gate, both because instance 4 makes the files differ:
+the replay XML carries no `line`-number check (the capture's `line` rows document framework-res, a
+different file), and the ANE fixture commits the vendor's own bytes rather than a reconstruction
+(there is no compiled-XML gap to bridge — `/product/etc/xml` is plain text). NOTICE now records both
+committed vendor files.
+
+One clarification rather than a correction: the emulator's `framework-res.apk` being built from the
+AOSP default (per-display keys) was already true; what the 2026-09-10 entry left unstated is that
+the base file never reaches the runtime at all — the RRO replaces it. That is now in §10.3.
+
 ## 2026-09-13 — gate 3 built, and the emulator's profile comes from an RRO
 
 Gate 3 (`BackfillCheckTest`, ARCHITECTURE §10.3) now exists and is green: 4 tests, 43 total in

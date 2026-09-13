@@ -8,3 +8,11 @@ audit/src/test/resources/aosp-defaults/36/power_profile.xml
     Default power profiles from AOSP platform/frameworks/base, at tags android-14.0.0_r1 and
     android-16.0.0_r1 respectively, path core/res/res/xml/power_profile.xml. Committed verbatim with
     their Apache-2.0 headers intact. Licensed under the Apache License, Version 2.0.
+
+audit/src/test/resources/probes/AneLx2-28/product_power_profile.xml
+audit/src/test/resources/probes/AneLx2-28/framework-res.xmltree.txt
+    Vendor material read off a retail Huawei ANE-LX2 (EMUI 9.1.0, Android 9): the /product/etc/xml/
+    power_profile.xml the device's framework prices from, pulled verbatim with its Apache-2.0 header
+    intact, and the aapt2 xmltree dump of the power_profile.xml resource in its framework-res.apk.
+    Both carry the Apache-2.0 header they shipped under; the framework-res dump is machine output
+    over the same copyrighted resource. Licensed under the Apache License, Version 2.0.
