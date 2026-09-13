@@ -16,3 +16,9 @@ audit/src/test/resources/probes/AneLx2-28/framework-res.xmltree.txt
     intact, and the aapt2 xmltree dump of the power_profile.xml resource in its framework-res.apk.
     Both carry the Apache-2.0 header they shipped under; the framework-res dump is machine output
     over the same copyrighted resource. Licensed under the Apache License, Version 2.0.
+
+app/src/main/res/font/roboto_mono_regular.ttf
+app/src/main/res/font/roboto_mono_medium.ttf
+    Roboto Mono static instances, weights 400 and 500, from the googlefonts/RobotoMono repository
+    (upstream of Google's ofl/robotomono). Copyright 2015 The Roboto Mono Project Authors
+    (https://github.com/googlefonts/RobotoMono). Licensed under the Apache License, Version 2.0.
