@@ -6,3 +6,4 @@ build/
 *.iml
 .idea/
 
+java_pid*.hprof
