@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.work.runtime)
 
     testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
     debugImplementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(platform(libs.compose.bom))
