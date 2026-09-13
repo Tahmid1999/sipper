@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Minimal platform theme. All real colour comes from SipperTheme in Compose; this exists
+         only so the window is not themed by a default we never audited. -->
+    <style name="Theme.Sipper" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+</resources>

@@ -3,12 +3,40 @@ kotlin = "2.4.10"
 agp = "9.1.0"
 binaryCompat = "0.16.3"
 sqldelight = "2.3.2"
+# Compose BOM is pinned by ARCHITECTURE.md §intro: "Compose BOM 2026.06.01". Not bumped to the
+# repository's latest (2026.09.00 at the time :app was scaffolded) - a pinned version is a spec.
+composeBom = "2026.06.01"
+activityCompose = "1.11.0"
+navigationCompose = "2.9.8"
+lifecycle = "2.9.4"
+work = "2.10.5"
+# material-icons-core resolves outside the BOM in the androidx.compose.material group.
+materialIconsCore = "1.7.8"
+datastore = "1.1.7"
 
 [libraries]
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+# The Compose compiler plugin is versioned with Kotlin itself (2.4.10), so this is not a new
+# pinned version; Kotlin 2.0+ requires it whenever compose is enabled.
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 binaryCompat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompat" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

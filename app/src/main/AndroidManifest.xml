@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- No uses-permission. The app requests nothing at install; the one optional grant is the
+         PACKAGE_USAGE_STATS appop, which can only be flipped by the user in Settings, after the
+         disclosure destination. -->
+
+    <queries>
+        <!-- PACKAGE VISIBILITY: as narrow as the screens allow. PROBES pair 2 names
+             com.android.settings explicitly; everything else is MAIN/LAUNCHER only.
+             QUERY_ALL_PACKAGES is not requested. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <package android:name="com.android.settings" />
+    </queries>
+
+    <application
+        android:label="sipper"
+        android:supportsRtl="true"
+        android:allowBackup="false"
+        android:theme="@style/Theme.Sipper">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
