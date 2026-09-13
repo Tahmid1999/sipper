@@ -348,6 +348,50 @@ The on-device probe has run on two targets and both have answered the questions 
 
 ---
 
+## 2026-09-13 — gate 3 built, and the emulator's profile comes from an RRO
+
+Gate 3 (`BackfillCheckTest`, ARCHITECTURE §10.3) now exists and is green: 4 tests, 43 total in
+`:audit`. Built against the committed API 36 capture (48 reflect rows), replayed with exact
+`Double` equality through `ProfileModel.averagePower`. The gate was observed red before being
+trusted: with `initDisplays` disabled in the model, 2 of its 4 tests failed (the replay row and the
+load-bearing provenance row) exactly as §10.3 predicts, then the model was restored byte-identical
+(`git diff` empty, test cache hit).
+
+The fixture XML is the file the runtime actually resolves, and finding it produced the day's real
+finding. `framework-res.apk` on this emulator declares the **per-display** schema
+(`screen.on.display0` at line 45, matching the AOSP default) — but the capture's package route
+declared the deprecated singular keys (`screen.on` at line 31). The resolved file comes from an
+enabled auto-generated product overlay,
+`/product/overlay/framework-res__sdk_gphone64_x86_64__auto_generated_rro_product.apk`, whose
+`power_profile.xml` matches the capture exactly: all 35 keys, every first value, the five `line`
+rows 30–34. So the emulator's back-fill demonstration rests on a legacy-schema profile supplied by
+an emulator-specific RRO, re-declaring keys the base APK had migrated away from. The vendor
+partition's framework-res RRO could not be pulled (permission denied); not a gap, since the
+product RRO matches and outranks it.
+
+This corrects an inference in the 2026-09-10 entry above ("The emulator's `framework-res.apk` is
+not built from that file"): it IS built from that file — the AOSP default, per-display keys and
+all — and an RRO replaces it at resolution time. The capture was right, the capture's XML source
+was mislabelled, and the mislabelling is now fixed by pointing the fixture at the overlay's file
+with the pull and dump recorded in `bench/probe-capture.md`.
+
+The committed fixture XML is a reconstruction from the committed aapt2 dump (same elements, text
+and line numbers; comments absent because aapt2 drops them), and the gate's
+`reconstructionMatchesTheCapture` test pins it to the capture's `declared` key set and `line`
+numbers so the replay cannot drift from what the device saw. During that reconstruction an
+off-by-one in the blank-line gap (35 keys each one line late) was caught by a mechanical check
+against the dump before the test was written — the check, not the eye, is what found it.
+
+Also fixed in passing: the fixture TSVs carry a UTF-8 BOM (the logcat redirect wrote one), which
+the test strips rather than editing the committed capture.
+
+Two numbers in the old §10.3 text were never real: "47 rows" (no 47-key list exists anywhere in
+the repo — the probe set is a union rule, and it produced 48 here) and the API 34 fixture (that
+AVD is arm64 on an x86_64 host and cannot boot). Both corrected in §10.3 rather than
+reconstructed; `bench/probe-capture.md` already said neither was attainable.
+
+---
+
 ## 2026-09-10 — getAveragePower throws on an empty array, observed
 
 Predicted from source earlier the same day and now observed on a device. `PowerProfile.java:896` at android-16.0.0_r1 is `return sPowerArrayMap.get(type)[0];` with no length check, while the levelled overload guards `values.length == 0` at `:967` and `getNumElements` reads `.length` at `:879`, so the length was available and unused.
