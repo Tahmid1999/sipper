@@ -50,6 +50,29 @@
 
 ---
 
+## 💻 Tech Stack & Libraries
+
+### ⚡ Core Language & Build System
+- **Kotlin** (`2.4.10`) — 100% Kotlin codebase built with strict type safety, immutability, and explicit telemetry contracts (`Reading<T>`).
+- **Android Gradle Plugin (AGP)** (`9.1.0`) — Multi-module Gradle structure managed via Version Catalogs (`libs.versions.toml`).
+
+### 📦 Android Jetpack Suite
+- **Jetpack Compose** (BOM `2026.06.01` & Material 3) — Declarative UI powering custom telemetry data grids (`ScrollTable`), dynamic microchip visualizers, and system UI bar controllers.
+- **Jetpack Navigation** (`navigation-compose 2.9.8`) — Single-activity type-safe tab navigation and destination routing.
+- **Jetpack Lifecycle & ViewModel** (`lifecycle-runtime-compose 2.9.4`) — Reactive UI state hoisting, Flow collection, and configuration lifecycle safety.
+- **Jetpack WorkManager** (`work-runtime-ktx 2.10.5`) — Periodic zero-drain background sampling scheduler with system constraints (`UNMETERED`, `StorageNotLow`).
+- **Jetpack DataStore** (`datastore-preferences 1.1.7`) — Asynchronous preference store for cold-start theme persistence and settings.
+- **Jetpack Activity** (`activity-compose 1.11.0`) — Modern activity entry points and dynamic launcher icon alias switching (`MainActivityLight`).
+
+### 💾 Persistence & Low-Level Audit
+- **SQLDelight** (`2.3.2`) — Type-safe SQL schema generation, automated query projections, and zero-overhead SQLite local storage.
+- **Framework Reflection & StAX Parser** — Multi-route `power_profile.xml` audit engine inspecting platform resource keys, Java reflection (`PowerProfile`), and XML pull parsing.
+
+### 🧪 Quality Assurance & Gates
+- **AndroidX Test & JUnit4** — Instrumented test harness (`ProfileProbe.kt`), Compose UI assertions, and source-level binary compatibility gates (`binary-compatibility-validator 0.16.3`).
+
+---
+
 ## 🏗️ Architecture & Module Breakdown
 
 Sipper is structured as a decoupled multi-module Gradle project:
