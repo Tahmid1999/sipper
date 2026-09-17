@@ -8,6 +8,7 @@
 [![SQLDelight](https://img.shields.io/badge/SQLDelight-2.0.1-green.svg)](https://cashapp.github.io/sqldelight/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
+
 **Sipper** is a high-precision, low-level Android telemetry and hardware power auditing application built out of passion for framework purity, low-power telemetry sampling, and clean Jetpack Compose UI architecture.
 
 ---
