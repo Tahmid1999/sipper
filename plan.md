@@ -109,7 +109,7 @@ is planned separately after this is reviewed.
 ---
 
 ## How each step is executed
-1. Do ONE step. 2. Aider auto-commits. 3. Human reviews the diff (Claude review pass on hard steps).
+1. Do ONE step. 2. Aider auto-commits. 3. Human reviews the diff.
 4. Next step. Never run ahead. If a build/version conflict appears (e.g. Kotlin 2.4.10 ↔ Gradle 8.13),
 report the exact error and stop — do not silently downgrade a pinned version.
 
