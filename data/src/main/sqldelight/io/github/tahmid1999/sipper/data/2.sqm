@@ -1,0 +1,7 @@
+CREATE TABLE sampler_run (
+    id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    sampled_at   INTEGER NOT NULL,
+    interval_ms  INTEGER NOT NULL,
+    bucket       TEXT NOT NULL,
+    events_count INTEGER NOT NULL
+);

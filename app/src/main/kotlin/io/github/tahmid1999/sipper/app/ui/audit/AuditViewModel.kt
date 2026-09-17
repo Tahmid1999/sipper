@@ -29,9 +29,13 @@ import java.security.MessageDigest
  * compares - on the ANE-LX2 it is also the route that matches what the framework prices, which is
  * what the primary-route caveat line says.
  */
-class AuditViewModel(context: Context) : ViewModel() {
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 
-    private val appContext = context.applicationContext
+class AuditViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val appContext = application.applicationContext
 
     private val _state = MutableStateFlow<AuditUiState>(AuditUiState.Loading)
     val state = _state.asStateFlow()

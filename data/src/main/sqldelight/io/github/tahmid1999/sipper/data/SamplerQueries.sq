@@ -1,0 +1,6 @@
+insertSamplerRun:
+INSERT INTO sampler_run (sampled_at, interval_ms, bucket, events_count)
+VALUES (?, ?, ?, ?);
+
+recentSamplerRuns:
+SELECT * FROM sampler_run ORDER BY sampled_at DESC LIMIT ?;

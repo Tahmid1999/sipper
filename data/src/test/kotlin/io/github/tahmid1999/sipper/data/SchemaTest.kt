@@ -38,6 +38,7 @@ class SchemaTest {
                 "bucket_change",
                 "intervention",
                 "probe_result",
+                "sampler_run",
             ),
             tables,
         )

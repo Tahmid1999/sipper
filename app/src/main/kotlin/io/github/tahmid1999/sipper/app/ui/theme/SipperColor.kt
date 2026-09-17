@@ -61,28 +61,46 @@ private val LightPalette = SipperColors(
 )
 
 private val DarkPalette = SipperColors(
-    surface = Color(0xFF0F1216),
-    surfaceRaised = Color(0xFF171B21),
-    surfaceSunken = Color(0xFF0A0C0F),
-    surfacePinned = Color(0xFF1B222B),
-    rule = Color(0xFF262B33),
-    ruleStrong = Color(0xFF5C6774),
-    textPrimary = Color(0xFFE3E7EC),
-    textSecondary = Color(0xFF98A1AC),
-    textNumeric = Color(0xFFF4F7FA),
-    accent = Color(0xFF6FA8F5),
+    surface = Color(0xFF000000),
+    surfaceRaised = Color(0xFF101419),
+    surfaceSunken = Color(0xFF07080A),
+    surfacePinned = Color(0xFF161A20),
+    rule = Color(0xFF222730),
+    ruleStrong = Color(0xFF525C6A),
+    textPrimary = Color(0xFFF0F4F8),
+    textSecondary = Color(0xFF9AA4B0),
+    textNumeric = Color(0xFFFFFFFF),
+    accent = Color(0xFF00E5FF),
     statePresent = Color(0xFF5BC27E),
     stateExplicitZero = Color(0xFFDFA43C),
     stateAbsentZero = Color(0xFFF0796B),
     stateBackFilled = Color(0xFFA6A2F2),
     stateDenied = Color(0xFF63C3E0),
     stateStale = Color(0xFFB4A78E),
-    hatchGround = Color(0xFF0A0C0F),
-    hatchLine = Color(0xFF424548), // textPrimary at 26%
+    hatchGround = Color(0xFF000000),
+    hatchLine = Color(0xFF2A303A),
 )
+
+enum class ThemeMode {
+    DARK,
+    LIGHT,
+    SYSTEM
+}
 
 val LocalSipperColors = staticCompositionLocalOf<SipperColors> {
     error("SipperColors not provided; SipperTheme is missing")
+}
+
+fun isDarkMode(mode: ThemeMode, systemIsDark: Boolean): Boolean {
+    return when (mode) {
+        ThemeMode.DARK -> true
+        ThemeMode.LIGHT -> false
+        ThemeMode.SYSTEM -> systemIsDark
+    }
+}
+
+fun sipperColors(mode: ThemeMode, systemIsDark: Boolean): SipperColors {
+    return if (isDarkMode(mode, systemIsDark)) DarkPalette else LightPalette
 }
 
 fun sipperColors(dark: Boolean): SipperColors = if (dark) DarkPalette else LightPalette

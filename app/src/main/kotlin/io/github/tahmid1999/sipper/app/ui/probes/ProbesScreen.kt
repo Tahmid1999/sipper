@@ -40,7 +40,7 @@ enum class ProbeState { Pending, Ok, Denied, Absent, Threw }
  * resolve. Denials print the verbatim runtime line, never a paraphrase.
  */
 @Composable
-fun ProbesScreen(context: Context) {
+fun ProbesScreen(context: Context = androidx.compose.ui.platform.LocalContext.current) {
     val colors = LocalSipperColors.current
     val api = android.os.Build.VERSION.SDK_INT
 
