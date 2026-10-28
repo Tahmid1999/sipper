@@ -1,134 +1,71 @@
-# Sipper — Hardware & Power Audit Telemetry for Android
+# sipper
 
-> **Developed by Tahmid Alavi Ishmam as a hobby project.**
+An Android app that shows what a normal, non-rooted app is allowed to read about power and
+resource use, and won't print a number it can't back up. No root, no adb, no network, nothing
+leaves the phone. Hobby project.
 
-[![Android Gradle Plugin](https://img.shields.io/badge/AGP-8.3.0-brightgreen.svg)](https://developer.android.com/studio/releases/gradle-plugin)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.22-blue.svg)](https://kotlinlang.org/)
-[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-1.6.0-4285F4.svg)](https://developer.android.com/jetpack/compose)
-[![SQLDelight](https://img.shields.io/badge/SQLDelight-2.0.1-green.svg)](https://cashapp.github.io/sqldelight/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+![sipper walkthrough](media/sipper_app_demo.gif)
 
+## Why
 
-**Sipper** is a high-precision, low-level Android telemetry and hardware power auditing application built out of passion for framework purity, low-power telemetry sampling, and clean Jetpack Compose UI architecture.
+Android's read APIs often hand back a confident wrong answer with no exception and no log line.
+`PowerProfile.getAveragePower()` returns `0.0` for a key the device sets to zero, and also `0.0`
+for a key the device never defined. You can't tell them apart from the return value. On the
+API 36 emulator, 21 of the 48 keys I probed came back as `0.0`.
 
----
+So every platform read in sipper returns a `Reading<T>` instead of a bare value:
 
-## 🎬 Live App Walkthrough
+- `Value(value, route)`, a real answer and where it came from
+- `SilentDefault(shown, cause, route)`, the framework returned a default because it had nothing
+  to return. The UI draws this as a hatched cell with the cause, never as a digit
+- `Denied(permission, howToGrant)`
+- `Absent(minApi)`, the call doesn't exist on this API level
 
-![Sipper App Walkthrough](media/sipper_app_demo.gif)
+## Screens
 
----
+- **AUDIT** reads `power_profile.xml` three ways (system resources, the framework package's
+  resources, `PowerProfile` reflection) and puts each key into one of four verdicts: present,
+  zero by explicit value, zero by absence, or back-filled.
+- **PROBES** runs side-by-side calls that return the same value for different reasons. Pair 1
+  calls `getAveragePower` on a real key the profile doesn't define and on a made-up key. Both
+  return `0.0`.
+- **APPS** shows foreground time per app from UsageStats, over 6 h, 24 h or 7 days, once the
+  user turns on usage access in Settings.
+- **SELF** shows sipper's own process: the WorkManager job that samples every 6 hours, and
+  exit reasons from `ApplicationExitInfo`.
+- **DEVICE** shows battery state, thermal zones, network byte counters and build info.
 
-## ✨ Key Features & Capability Matrix
+## Modules
 
-### 1. 🔍 OEM Power Profile & Hardware Audit (`AUDIT`)
-- **Multi-Route Verification**: Audits framework `power_profile.xml` across 3 system routes (`Resources.getSystem()`, `getResourcesForApplication()`, `PowerProfile` reflection) to verify hardware power constants.
-- **Verdict Classification**: Ranks hardware keys into `Present (Explicit XML)`, `Explicit Zero`, `Absent (Zero by Absence)`, and `Denial/Stale` states with strict purity guarantees.
-- **Coverage Ring Visualizer**: Computes hardware profile coverage percentage and key agreement breakdown.
+- `audit`: plain Kotlin. Profile parser, key table, verdicts, `Reading<T>`
+- `usage`: plain Kotlin. Rebuilds foreground time from usage events
+- `data`: plain Kotlin. SQLDelight schema for the samples
+- `collect`: Android library. The platform reads
+- `app`: Jetpack Compose UI
+- `bench/`: raw probe captures from the two devices below
 
-### 2. ⚡ Per-App Energy Impact (`APPS`)
-- Ranks installed applications by estimated energy consumption (mAh), CPU foreground execution time, and wake lock activity.
-- **Privacy Disclosure Destination**: Clean optional usage statistics grant flow with user transparency.
+The design notes the code comments refer to are in `docs/`.
 
-### 3. 🛡️ First-Party Vitals (`SELF`)
-- Monitors first-party zero-drain runtime vitals, WorkManager periodic sampling status, process identity (UID), and exit stability.
+## Limitations
 
-### 4. 🌡️ Probes & Deep Hardware Telemetry (`PROBES`)
-- Live thermal zone sensor readings (°C) categorized by temperature threshold badges.
-- Battery state-of-charge (% SoC), voltage (mV), technology, and health.
-- Network interface traffic counters (`wlan0`, `rmnet0` bytes transmitted/received).
+- Android gives a normal app no per-app battery figure. `getBatteryUsageStats` is blocked, and
+  `dumpsys batterystats` needs `DUMP`. The mAh number on APPS is a rough placeholder
+  (foreground time times a fixed 250 mA), not a measurement.
+- sipper can't limit other apps. No API lets a normal app change another app's standby bucket,
+  background restriction or battery optimisation.
+- I tested on two devices: a 2018 Huawei ANE-LX2 at API 28, and the Pixel 9 Pro XL emulator at
+  API 36. Some PROBES pairs need API 30 or 31, so those only show on the emulator.
+- Not on the Play Store.
 
-### 5. 📱 Device System Profile (`DEVICE`)
-- Comprehensive device identity audit (Manufacturer, Model, Brand, Android Version, API Level, Fingerprint, Build ID, Kernel Release).
+## Build
 
-### 6. 🎨 Adaptive Light / OLED Dark Theme Engine & System Bars
-- **OLED Pitch Black Theme**: `#000000` surface paired with pure black system status bar & navigation bar (`isAppearanceLightStatusBars = false`).
-- **Clean Light Theme**: `#FFFFFF` surface paired with pure white system status bar & navigation bar (`isAppearanceLightStatusBars = true`).
-- **Cold-Start Persistence**: Theme selection stored synchronously in `SharedPreferences` to render the correct light or dark mode on cold launch.
-- **Live Dynamic Logos**: High-tech microchip logo badge adapts dynamically on-screen between dark (`app_logo.png`) and light (`app_logo_light.png`) variants.
-- **Dynamic Launcher Icon Alias**: `<activity-alias>` switching (`MainActivityLight`) syncs the Android home screen app icon with the active theme mode.
-
----
-
-## 💻 Tech Stack & Libraries
-
-### ⚡ Core Language & Build System
-- **Kotlin** (`2.4.10`) — 100% Kotlin codebase built with strict type safety, immutability, and explicit telemetry contracts (`Reading<T>`).
-- **Android Gradle Plugin (AGP)** (`9.1.0`) — Multi-module Gradle structure managed via Version Catalogs (`libs.versions.toml`).
-
-### 📦 Android Jetpack Suite
-- **Jetpack Compose** (BOM `2026.06.01` & Material 3) — Declarative UI powering custom telemetry data grids (`ScrollTable`), dynamic microchip visualizers, and system UI bar controllers.
-- **Jetpack Navigation** (`navigation-compose 2.9.8`) — Single-activity type-safe tab navigation and destination routing.
-- **Jetpack Lifecycle & ViewModel** (`lifecycle-runtime-compose 2.9.4`) — Reactive UI state hoisting, Flow collection, and configuration lifecycle safety.
-- **Jetpack WorkManager** (`work-runtime-ktx 2.10.5`) — Periodic zero-drain background sampling scheduler with system constraints (`UNMETERED`, `StorageNotLow`).
-- **Jetpack DataStore** (`datastore-preferences 1.1.7`) — Asynchronous preference store for cold-start theme persistence and settings.
-- **Jetpack Activity** (`activity-compose 1.11.0`) — Modern activity entry points and dynamic launcher icon alias switching (`MainActivityLight`).
-
-### 💾 Persistence & Low-Level Audit
-- **SQLDelight** (`2.3.2`) — Type-safe SQL schema generation, automated query projections, and zero-overhead SQLite local storage.
-- **Framework Reflection & StAX Parser** — Multi-route `power_profile.xml` audit engine inspecting platform resource keys, Java reflection (`PowerProfile`), and XML pull parsing.
-
-### 🧪 Quality Assurance & Gates
-- **AndroidX Test & JUnit4** — Instrumented test harness (`ProfileProbe.kt`), Compose UI assertions, and source-level binary compatibility gates (`binary-compatibility-validator 0.16.3`).
-
----
-
-## 🏗️ Architecture & Module Breakdown
-
-Sipper is structured as a decoupled multi-module Gradle project:
+JDK 17 and Android SDK 36. `minSdk` is 28.
 
 ```
-g:/sipper/
-├── app/       # Jetpack Compose UI, Navigation Host, ViewModels, System UI Bar Controller, Theme Persistence
-├── audit/     # Framework power_profile.xml audit engine & hardware verdict classification logic
-├── collect/   # Zero-drain system telemetry collectors adhering to strict Reading<T> data contracts
-├── data/      # SQLDelight local database schema & WorkManager sampling repository
-├── usage/     # Battery usage stats attribution algorithms & per-app energy calculation
-├── bench/     # Performance, memory, and runtime benchmark harness
-└── media/     # App walkthrough animations & visual assets
-```
-
----
-
-## 🛠️ Building & Running
-
-### Prerequisites
-- **JDK 17** or higher
-- **Android SDK 34** (Build Tools 34.0.0)
-- Connected physical device or Android Emulator (Android 8.0 / API 26+)
-
-### Build & Run Verification Commands
-
-```bash
-# Clean build & run all unit tests and lint checks
 ./gradlew check
-
-# Build and install Debug APK on connected device
-./gradlew installDebug
+./gradlew :app:installDebug
 ```
 
----
+## Licence
 
-## 📜 Developer Credit & Purpose
-
-Developed by **Tahmid Alavi Ishmam** as a hobby project out of passion for low-level Android framework telemetry, hardware audit purity, and clean Jetpack Compose UI architecture.
-
----
-
-## 📄 License
-
-```
-Copyright 2026 Tahmid Alavi Ishmam
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
+Apache 2.0, see `LICENSE`. Third-party files are listed in `NOTICE`.
