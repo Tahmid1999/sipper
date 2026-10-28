@@ -29,9 +29,7 @@ import io.github.tahmid1999.sipper.app.ui.BarChartEntry
 import io.github.tahmid1999.sipper.app.ui.DashboardCard
 import io.github.tahmid1999.sipper.app.ui.Fmt
 import io.github.tahmid1999.sipper.app.ui.GaugeBar
-import io.github.tahmid1999.sipper.app.ui.LivePulseDot
 import io.github.tahmid1999.sipper.app.ui.MultiBarChart
-import io.github.tahmid1999.sipper.app.ui.SparklineChart
 import io.github.tahmid1999.sipper.app.ui.StatCallout
 import io.github.tahmid1999.sipper.app.ui.TempBadge
 import io.github.tahmid1999.sipper.app.ui.theme.LocalSipperColors
@@ -81,16 +79,13 @@ public fun DeviceScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                LivePulseDot()
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("REALTIME HARDWARE TELEMETRY", style = SipperType.monoChip, color = colors.textPrimary)
+                Text("HARDWARE, READ WHEN THIS SCREEN OPENS", style = SipperType.monoChip, color = colors.textPrimary)
             }
-            Text("POLLING ACTIVE", style = SipperType.monoChip, color = colors.statePresent)
         }
 
         // 1. BATTERY GAUGE & SPARKLINE TREND CARD WITH HERO STAT CALLOUTS
         batteryState?.let { b ->
-            DashboardCard(title = "Battery Charge & Historical Trend", badge = "${b.level}%") {
+            DashboardCard(title = "Battery", badge = "${b.level}%") {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -108,18 +103,6 @@ public fun DeviceScreen() {
                     label = "Battery Capacity",
                     valueText = "${b.level}%",
                     gradientColors = listOf(colors.statePresent, colors.accent)
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text("DISCHARGE LEVEL TREND (24H SPARKLINE)", style = SipperType.monoChip, color = colors.textSecondary)
-                Spacer(modifier = Modifier.height(4.dp))
-                val trendPoints = remember(b.level) {
-                    listOf(100f, 95f, 92f, 88f, 85f, 81f, b.level.toFloat())
-                }
-                SparklineChart(
-                    dataPoints = trendPoints,
-                    minY = 0f,
-                    maxY = 100f,
-                    lineColor = colors.statePresent
                 )
             }
         }
