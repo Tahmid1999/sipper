@@ -182,10 +182,14 @@ private fun Summary(l: AppsLoad.Loaded, shown: List<AppsRow>, window: AppsWindow
         color = colors.textPrimary,
         modifier = Modifier.padding(vertical = 2.dp),
     )
-    if (l.degradedBelowApi.isNotEmpty()) {
+    // visible and fgs need the API 29 stop events; shutdown needs API 30. One line, each with its own level.
+    val degraded = buildList {
+        if ("visible" in l.degradedBelowApi) add("visible and fgs need API 29")
+        if ("shutdown" in l.degradedBelowApi) add("shutdown events need API 30, so a reboot loses the open session")
+    }
+    if (degraded.isNotEmpty()) {
         Text(
-            "${l.degradedBelowApi.sorted().joinToString(", ")}: structurally unavailable below API 29, " +
-                "this device is ${Build.VERSION.SDK_INT}",
+            degraded.joinToString("; ") + ". This device is ${Build.VERSION.SDK_INT}.",
             style = SipperType.monoStrip,
             color = colors.textSecondary,
             modifier = Modifier.padding(bottom = 2.dp),

@@ -56,7 +56,9 @@ fun loadApps(context: Context, window: AppsWindow, nowMs: Long = System.currentT
             val w = rec.windows[pkg]
             val fgFw = fw[pkg]
             val fgEvt = w?.foregroundMs ?: 0L
-            if ((fgFw ?: 0L) == 0L && fgEvt == 0L) return@mapNotNull null
+            val tailOpen = (w?.unclosedTailMs ?: 0L) > 0L
+            // An app in the foreground right now has only an open tail, so it is kept on that alone.
+            if ((fgFw ?: 0L) == 0L && fgEvt == 0L && !tailOpen) return@mapNotNull null
             AppsRow(
                 pkg = pkg,
                 label = labelOf(pm, pkg),
@@ -65,7 +67,7 @@ fun loadApps(context: Context, window: AppsWindow, nowMs: Long = System.currentT
                 fgEvtMs = fgEvt,
                 visibleMs = if (tracksVisible) w?.visibleMs ?: 0L else null,
                 fgsMs = if (tracksVisible) w?.fgsMs ?: 0L else null,
-                tailOpen = (w?.unclosedTailMs ?: 0L) > 0L,
+                tailOpen = tailOpen,
                 rxFgBytes = null, txFgBytes = null, rxBgBytes = null, txBgBytes = null,
                 bucket = null,
             )
