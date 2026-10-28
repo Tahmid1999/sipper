@@ -43,4 +43,20 @@ class ProfileParserTest {
             parseProfile(xml).lines,
         )
     }
+
+    @Test
+    fun keepsEachArraysTokensSeparate() {
+        val two = """
+            <device name="Android">
+                <array name="a"><value>1</value><value>2</value></array>
+                <array name="b"><value>0.0</value></array>
+            </device>
+        """.trimIndent()
+        assertEquals(mapOf("a" to listOf("1", "2"), "b" to listOf("0.0")), parseProfile(two).tokens)
+    }
+
+    @Test
+    fun keepsTheLiteralTokenNotTheDouble() {
+        assertEquals(listOf("3000"), parseProfile(xml).tokens["battery.capacity"])
+    }
 }

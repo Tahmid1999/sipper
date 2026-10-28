@@ -46,6 +46,7 @@ public fun parseProfile(xml: String): ParsedProfile {
                         line = reader.location.lineNumber
                         inArray = true
                         values.clear()
+                        tokenList.clear()
                     }
                     "value" -> text.setLength(0)
                 }
