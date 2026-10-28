@@ -212,11 +212,11 @@ fun AboutScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("APPS", style = SipperType.monoStrong, color = colors.accent)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("• Per-App Energy Impact", style = SipperType.monoChip, color = colors.statePresent)
+                        Text("• Foreground Time", style = SipperType.monoChip, color = colors.statePresent)
                     }
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Ranks installed applications by estimated battery energy consumption (mAh), foreground execution time, and wake lock activity.",
+                        text = "Per-app foreground time two ways: the framework's daily buckets and a reconstruction from the event stream, side by side with the difference. Needs usage access.",
                         style = SipperType.monoBlock,
                         color = colors.textSecondary
                     )
@@ -231,7 +231,7 @@ fun AboutScreen(
                     }
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Monitors first-party zero-drain runtime vitals, WorkManager periodic sampling status, process identity (UID), and exit stability.",
+                        text = "sipper's own package: identity, the WorkManager sampler, and exit records from ApplicationExitInfo on API 30+.",
                         style = SipperType.monoBlock,
                         color = colors.textSecondary
                     )
@@ -242,11 +242,11 @@ fun AboutScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("PROBES", style = SipperType.monoStrong, color = colors.accent)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("• CPU & Kernel State", style = SipperType.monoChip, color = colors.statePresent)
+                        Text("• Paired Demonstrations", style = SipperType.monoChip, color = colors.statePresent)
                     }
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Real-time frequency scaling readouts per CPU core cluster, RAM & ZRAM swap pressure, and active Android kernel subsystems.",
+                        text = "Calls that return the same value for different reasons, side by side. Pair 1: getAveragePower on a real undefined key and on a made-up key, both 0.0.",
                         style = SipperType.monoBlock,
                         color = colors.textSecondary
                     )
@@ -261,7 +261,7 @@ fun AboutScreen(
                     }
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Live battery discharge sparklines, voltage/capacity statistics, and a 14-zone thermal sensor heat map grid.",
+                        text = "Battery state, thermal zones, memory and CPU clusters, read when the screen opens.",
                         style = SipperType.monoBlock,
                         color = colors.textSecondary
                     )
@@ -281,8 +281,8 @@ fun AboutScreen(
                     Text("Audits framework-res.apk power_profile.xml across 3 system routes to uncover OEM profile gaps.", style = SipperType.monoBlock, color = colors.textSecondary)
                 }
                 Column {
-                    Text("3. Real-Time Hardware Telemetry", style = SipperType.monoStrong, color = colors.statePresent)
-                    Text("Live CPU cluster frequency scaling, RAM & ZRAM swap utilization, 14-zone thermal heat map, and battery discharge sparklines.", style = SipperType.monoBlock, color = colors.textSecondary)
+                    Text("3. Device Read-Out", style = SipperType.monoStrong, color = colors.statePresent)
+                    Text("Battery, thermal zones, memory and CPU clusters as the platform reports them, read once when DEVICE opens.", style = SipperType.monoBlock, color = colors.textSecondary)
                 }
             }
         }
