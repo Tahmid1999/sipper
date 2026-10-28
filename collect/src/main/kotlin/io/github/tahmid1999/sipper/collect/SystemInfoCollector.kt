@@ -69,16 +69,15 @@ public fun readCpuClusters(): Reading<List<CpuClusterInfo>> {
     }
 
     val clusters = mutableListOf<CpuClusterInfo>()
-    var coreCount = 0
-    cpuDir.listFiles { file -> file.isDirectory && file.name.matches(Regex("cpu[0-9]+")) }?.forEach {
-        coreCount++
-    }
 
-    val policyDirs = File("/sys/devices/system/cpu/cpufreq").listFiles { f ->
+    // listFiles has no order, and on the ANE-LX2 it returned policy4 first. Sort by the number.
+    val policyDirs = (File("/sys/devices/system/cpu/cpufreq").listFiles { f ->
         f.isDirectory && f.name.startsWith("policy")
-    } ?: emptyArray()
+    } ?: emptyArray()).sortedBy { it.name.removePrefix("policy").toIntOrNull() ?: Int.MAX_VALUE }
 
     for ((idx, pDir) in policyDirs.withIndex()) {
+        // Each policy owns only the cores in its related_cpus, not every cpuN directory.
+        val coreCount = File(pDir, "related_cpus").let { if (it.canRead()) countCpus(it.readText()) else 0 }
         val curFreq = File(pDir, "scaling_cur_freq").let { if (it.canRead()) it.readText().trim().toLongOrNull() else null } ?: 0L
         val minFreq = File(pDir, "scaling_min_freq").let { if (it.canRead()) it.readText().trim().toLongOrNull() else null } ?: 0L
         val maxFreq = File(pDir, "scaling_max_freq").let { if (it.canRead()) it.readText().trim().toLongOrNull() else null } ?: 0L
@@ -102,3 +101,12 @@ public fun readCpuClusters(): Reading<List<CpuClusterInfo>> {
         Reading.Value(clusters, route)
     }
 }
+
+// related_cpus is "0 1 2 3" on this kernel; some kernels write ranges like "0-3" or "0-3,6".
+internal fun countCpus(list: String): Int =
+    list.trim().split(' ', ',').filter { it.isNotEmpty() }.sumOf { part ->
+        val bounds = part.split('-')
+        val lo = bounds[0].toIntOrNull() ?: return@sumOf 0
+        val hi = bounds.getOrNull(1)?.toIntOrNull() ?: lo
+        hi - lo + 1
+    }

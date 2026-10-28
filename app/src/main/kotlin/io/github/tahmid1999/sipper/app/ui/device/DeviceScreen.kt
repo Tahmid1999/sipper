@@ -100,7 +100,7 @@ public fun DeviceScreen() {
                 val frac = if (b.scale > 0) b.level.toFloat() / b.scale else 0f
                 GaugeBar(
                     fraction = frac,
-                    label = "Battery Capacity",
+                    label = "Charge",
                     valueText = "${b.level}%",
                     gradientColors = listOf(colors.statePresent, colors.accent)
                 )
