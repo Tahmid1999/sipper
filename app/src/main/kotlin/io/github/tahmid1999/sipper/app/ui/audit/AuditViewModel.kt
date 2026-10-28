@@ -139,16 +139,17 @@ class AuditViewModel(application: Application) : AndroidViewModel(application) {
     ): Agreement {
         val systemProfile = (system as? Reading.Value)?.value
         val pkgProfile = (pkg as? Reading.Value)?.value
-        var agreed = 0
-        if (systemProfile != null && pkgProfile != null &&
+        val resAgree = systemProfile != null && pkgProfile != null &&
             digestOf(systemProfile) == digestOf(pkgProfile)
-        ) {
-            agreed++
-        }
         val reflectionBlocked = reflection.values.all { it == null }
-        if (!reflectionBlocked) {
-            val allMatch = reflection.entries.all { (k, v) -> v == null || model.averagePower(k) == v }
-            if (allMatch) agreed++
+        // The model is built from the package route, so a reflection match is a match with that route.
+        val reflectionAgrees = !reflectionBlocked &&
+            reflection.entries.all { (k, v) -> v == null || model.averagePower(k) == v }
+        // Counts routes, not pairs: two resource routes that match are 2 agreeing, as on the ANE-LX2.
+        val agreed = when {
+            resAgree && reflectionAgrees -> 3
+            resAgree || reflectionAgrees -> 2
+            else -> 0
         }
         val blocked = if (reflectionBlocked) 1 else 0
         return Agreement(attempted = 3, agreed = agreed, blocked = blocked)

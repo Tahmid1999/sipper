@@ -78,12 +78,14 @@ fun CoverageHeroCard(state: AuditUiState.Ready) {
     val total = state.rows.size
     val presentCount = state.rows.count { it.verdict == Verdict.PRESENT }
     val explicitZeroCount = state.rows.count { it.verdict == Verdict.ZERO_BY_EXPLICIT_VALUE }
-    val coverageFrac = if (total > 0) (presentCount + explicitZeroCount).toFloat() / total else 0f
+    // Declared means the XML wrote the key, zero or not. The ring, badge and label count the same thing.
+    val declaredCount = presentCount + explicitZeroCount
+    val coverageFrac = if (total > 0) declaredCount.toFloat() / total else 0f
 
-    DashboardCard(title = "Hardware Profile Coverage", badge = "$presentCount / $total Keys") {
+    DashboardCard(title = "Hardware Profile Coverage", badge = "$declaredCount / $total declared") {
         CoverageRing(
             percentage = coverageFrac,
-            label = "$presentCount Populated XML Keys out of $total Total Keys"
+            label = "$declaredCount of $total keys declared in the XML: $presentCount non-zero, $explicitZeroCount set to 0"
         )
     }
 }
