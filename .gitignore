@@ -7,3 +7,5 @@ build/
 .idea/
 
 java_pid*.hprof
+
+.kilo/
