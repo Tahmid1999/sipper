@@ -20,7 +20,7 @@ class AppsQueryTest {
         pkg = pkg, label = label, hasLauncher = true,
         fgFwMs = fgFw, fgEvtMs = fgEvt, visibleMs = 0, fgsMs = 0, tailOpen = false,
         rxFgBytes = rxFg, txFgBytes = null, rxBgBytes = null, txBgBytes = null,
-        bucket = bucket, mah = null,
+        bucket = bucket,
     )
 
     private val rows = listOf(

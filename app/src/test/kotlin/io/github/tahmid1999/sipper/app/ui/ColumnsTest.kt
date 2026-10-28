@@ -42,23 +42,23 @@ class ColumnsTest {
     }
 
     @Test
-    fun appsTableIsFourteenColumnsOneFrozen() {
-        assertEquals(14, AppsColumns.size, "CONTRACT §5: fourteen columns")
+    fun appsTableIsThirteenColumnsOneFrozen() {
+        assertEquals(13, AppsColumns.size, "CONTRACT §5 less mAh: thirteen columns")
         assertEquals("package", AppsColumns.first().id, "the frozen column is package")
     }
 
     @Test
-    fun appsScrollingRegionIs895dp() {
-        // CONTRACT §5: frozen 142 + scrolling 895 + 10 + 2 + 10 = 1059dp.
+    fun appsScrollingRegionIs833dp() {
+        // CONTRACT §5 was frozen 142 + scrolling 895; dropping mAh (62dp) leaves 833.
         val scrolling = AppsColumns.drop(1).sumOf { widthDp(it) }
-        assertEquals(895, scrolling, "APPS scrolling region")
+        assertEquals(833, scrolling, "APPS scrolling region")
     }
 
     @Test
-    fun appsTotalIs1059dp() {
+    fun appsTotalIs997dp() {
         val frozen = widthDp(AppsColumns.first())
         val scrolling = AppsColumns.drop(1).sumOf { widthDp(it) }
-        assertEquals(1059, frozen + scrolling + 10 + 2 + 10, "APPS total")
+        assertEquals(997, frozen + scrolling + 10 + 2 + 10, "APPS total")
     }
 
     @Test

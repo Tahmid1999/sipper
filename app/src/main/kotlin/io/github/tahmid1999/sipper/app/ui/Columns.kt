@@ -16,7 +16,7 @@ val AuditColumns: List<TableColumn> = listOf(
     TableColumn(id = "effect", title = "effect", chars = 28, align = ColumnAlign.Left),
 )
 
-/** APPS: fourteen columns, one frozen. CONTRACT.md §5. */
+/** APPS: thirteen columns, one frozen. CONTRACT.md §5, without the mAh column (see below). */
 val AppsColumns: List<TableColumn> = listOf(
     TableColumn(id = "package", title = "package", chars = 18, align = ColumnAlign.Left),
     TableColumn(id = "fgfw", title = "fg fw", chars = 6, align = ColumnAlign.Right),
@@ -31,5 +31,12 @@ val AppsColumns: List<TableColumn> = listOf(
     TableColumn(id = "rxbg", title = "rx bg", chars = 7, align = ColumnAlign.Right),
     TableColumn(id = "txbg", title = "tx bg", chars = 7, align = ColumnAlign.Right),
     TableColumn(id = "bucket", title = "bucket", chars = 14, align = ColumnAlign.Left),
-    TableColumn(id = "mah", title = "mAh", chars = 7, align = ColumnAlign.Right),
 )
+
+// The contract's fourteenth column was a modelled per-app mAh. Android gives an installed app no
+// per-uid power figure to check a model against, so it is gone rather than printed as a guess.
+
+/** The columns APPS draws today. The network and bucket readers are specced but not built yet. */
+val AppsBuiltColumns: List<TableColumn> = AppsColumns.filter {
+    it.id !in setOf("rxfg", "txfg", "rxbg", "txbg", "bucket")
+}

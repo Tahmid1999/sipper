@@ -7,7 +7,7 @@ import io.github.tahmid1999.sipper.usage.PackageWindow
  * tested on the JVM; the projection never reads scroll state, so scrolling does not re-sort.
  */
 
-enum class AppsSort { Package, FgFw, FgEvt, Delta, Label, Visible, Fgs, RxFg, TxFg, RxBg, TxBg, Bucket, Mah }
+enum class AppsSort { Package, FgFw, FgEvt, Delta, Label, Visible, Fgs, RxFg, TxFg, RxBg, TxBg, Bucket }
 
 enum class AppsWindow(val hours: Long) { H6(6), H24(24), H168(168) }
 
@@ -54,7 +54,6 @@ data class AppsRow(
     val tailOpen: Boolean,
     val rxFgBytes: Long?, val txFgBytes: Long?, val rxBgBytes: Long?, val txBgBytes: Long?,
     val bucket: Int?,         // null renders `unknown`
-    val mah: Double?,         // modelled total; null when the sampler has not run
 )
 
 /** The projection: filter, then sort. Pure; the JVM tests pin §2.6's default and the filters. */
@@ -80,7 +79,6 @@ fun projectApps(rows: List<AppsRow>, query: AppsQuery): List<AppsRow> {
         AppsSort.RxBg -> compareBy { it.rxBgBytes ?: 0L }
         AppsSort.TxBg -> compareBy { it.txBgBytes ?: 0L }
         AppsSort.Bucket -> compareBy { it.bucket ?: -1 }
-        AppsSort.Mah -> compareBy { it.mah ?: 0.0 }
         AppsSort.FgFw -> compareBy { it.fgFwMs ?: 0L }
         AppsSort.FgEvt -> compareBy { it.fgEvtMs }
     }
