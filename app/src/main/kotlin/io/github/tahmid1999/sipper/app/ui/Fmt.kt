@@ -1,5 +1,9 @@
 package io.github.tahmid1999.sipper.app.ui
 
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 /**
@@ -54,4 +58,9 @@ object Fmt {
         return if (value < 10.0) String.format(Locale.ROOT, "%.1f %s", value, unit)
         else String.format(Locale.ROOT, "%.0f %s", value, unit)
     }
+
+    /** ISO-8601 with offset, to the second, in the device zone (§1.4). Never relative time. */
+    fun timestamp(ms: Long, zone: ZoneId = ZoneId.systemDefault()): String =
+        Instant.ofEpochMilli(ms).truncatedTo(ChronoUnit.SECONDS).atZone(zone)
+            .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 }

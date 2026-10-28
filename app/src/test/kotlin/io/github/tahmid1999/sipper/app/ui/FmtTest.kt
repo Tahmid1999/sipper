@@ -62,4 +62,11 @@ class FmtTest {
         // It cannot be negated and no platform read produces it; the formatter says so loudly.
         assertFailsWith<IllegalArgumentException> { Fmt.hm(Long.MIN_VALUE) }
     }
+
+    @Test
+    fun timestampIsIsoWithOffsetToTheSecond() {
+        val dhaka = java.time.ZoneId.of("Asia/Dhaka")
+        assertEquals("2026-09-08T21:14:03+06:00", Fmt.timestamp(1_788_880_443_999L, dhaka))
+        assertEquals("1970-01-01T00:00:00Z", Fmt.timestamp(0L, java.time.ZoneOffset.UTC))
+    }
 }

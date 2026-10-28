@@ -1,6 +1,9 @@
 package io.github.tahmid1999.sipper.app.ui.self
 
+import android.app.ActivityManager
+import android.app.ApplicationExitInfo
 import android.os.Build
+import androidx.annotation.RequiresApi
 import android.os.Process
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,12 +19,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import io.github.tahmid1999.sipper.app.ui.DashboardCard
-import io.github.tahmid1999.sipper.app.ui.GaugeBar
+import io.github.tahmid1999.sipper.app.ui.Fmt
 import io.github.tahmid1999.sipper.app.ui.theme.LocalSipperColors
 import io.github.tahmid1999.sipper.app.ui.theme.SipperType
 
@@ -65,24 +69,18 @@ public fun SelfScreen(
             }
         }
 
-        // 1. APP VITALS SCORECARD
-        DashboardCard(title = "App Vitals & Power Impact", badge = "OPTIMAL") {
-            GaugeBar(
-                fraction = 0.0f,
-                label = "Partial Wake Locks (24h)",
-                valueText = "0:00 (sipper acquires zero locks)",
-                fillColor = colors.statePresent
-            )
-            GaugeBar(
-                fraction = 0.0f,
-                label = "Foreground Services (24h)",
-                valueText = "0:00 (reconstructed from events)",
-                fillColor = colors.statePresent
+        // 1. WHAT RUNS IN THE BACKGROUND
+        DashboardCard(title = "Background work") {
+            Text(
+                "sipper declares no foreground service and starts none. Its only background work is " +
+                    "the WorkManager sampler below.",
+                style = SipperType.monoBlock,
+                color = colors.textSecondary,
             )
         }
 
         // 2. SAMPLER STATUS
-        DashboardCard(title = "Background Sampler Service", badge = "ACTIVE") {
+        DashboardCard(title = "Background Sampler Service") {
             Text("WorkManager Periodic Task", style = SipperType.monoStrong, color = colors.textPrimary)
             Text("Schedule: Every 6 hours · Non-blocking background worker", style = SipperType.monoBlock, color = colors.textSecondary)
         }
@@ -101,12 +99,69 @@ public fun SelfScreen(
         }
 
         // 4. PROCESS EXIT RECORDS CARD
-        DashboardCard(title = "Exit Reasons & Stability", badge = "API ${Build.VERSION.SDK_INT}") {
+        DashboardCard(title = "Exit records", badge = "API ${Build.VERSION.SDK_INT}") {
             if (Build.VERSION.SDK_INT >= 30) {
-                Text("Historical exit reasons queried cleanly from ApplicationExitInfo.", style = SipperType.monoBlock, color = colors.textPrimary)
+                ExitRecords()
             } else {
-                Text("getHistoricalProcessExitReasons requires API 30+; this device is running API ${Build.VERSION.SDK_INT}.", style = SipperType.monoBlock, color = colors.textSecondary)
+                Text(
+                    "absent · getHistoricalProcessExitReasons requires API 30; this device is ${Build.VERSION.SDK_INT}",
+                    style = SipperType.monoBlock,
+                    color = colors.textSecondary,
+                )
             }
         }
     }
+}
+
+@RequiresApi(30)
+@Composable
+private fun ExitRecords() {
+    val colors = LocalSipperColors.current
+    val context = LocalContext.current
+    val records = remember {
+        val am = context.getSystemService(ActivityManager::class.java)
+        am.getHistoricalProcessExitReasons(context.packageName, 0, 16)
+    }
+    if (records.isEmpty()) {
+        Text(
+            "no exit records for this package yet",
+            style = SipperType.monoBlock,
+            color = colors.textSecondary,
+        )
+        return
+    }
+    records.forEach { r ->
+        Text(
+            "${Fmt.timestamp(r.timestamp)}  ${exitReasonName(r.reason)} (${r.reason})  " +
+                "status ${r.status}  pss ${Fmt.bytes(r.pss * 1024)}",
+            style = SipperType.monoBlock,
+            color = colors.textPrimary,
+        )
+        r.description?.let {
+            Text(it, style = SipperType.monoBlock, color = colors.textSecondary)
+        }
+    }
+}
+
+// Names for the REASON_* constants at compileSdk 36. A newer platform can return an int this
+// table does not know, so the integer is always printed beside the name.
+private fun exitReasonName(reason: Int): String = when (reason) {
+    ApplicationExitInfo.REASON_UNKNOWN -> "REASON_UNKNOWN"
+    ApplicationExitInfo.REASON_EXIT_SELF -> "REASON_EXIT_SELF"
+    ApplicationExitInfo.REASON_SIGNALED -> "REASON_SIGNALED"
+    ApplicationExitInfo.REASON_LOW_MEMORY -> "REASON_LOW_MEMORY"
+    ApplicationExitInfo.REASON_CRASH -> "REASON_CRASH"
+    ApplicationExitInfo.REASON_CRASH_NATIVE -> "REASON_CRASH_NATIVE"
+    ApplicationExitInfo.REASON_ANR -> "REASON_ANR"
+    ApplicationExitInfo.REASON_INITIALIZATION_FAILURE -> "REASON_INITIALIZATION_FAILURE"
+    ApplicationExitInfo.REASON_PERMISSION_CHANGE -> "REASON_PERMISSION_CHANGE"
+    ApplicationExitInfo.REASON_EXCESSIVE_RESOURCE_USAGE -> "REASON_EXCESSIVE_RESOURCE_USAGE"
+    ApplicationExitInfo.REASON_USER_REQUESTED -> "REASON_USER_REQUESTED"
+    ApplicationExitInfo.REASON_USER_STOPPED -> "REASON_USER_STOPPED"
+    ApplicationExitInfo.REASON_DEPENDENCY_DIED -> "REASON_DEPENDENCY_DIED"
+    ApplicationExitInfo.REASON_OTHER -> "REASON_OTHER"
+    ApplicationExitInfo.REASON_FREEZER -> "REASON_FREEZER"
+    ApplicationExitInfo.REASON_PACKAGE_STATE_CHANGE -> "REASON_PACKAGE_STATE_CHANGE"
+    ApplicationExitInfo.REASON_PACKAGE_UPDATED -> "REASON_PACKAGE_UPDATED"
+    else -> "unnamed"
 }
